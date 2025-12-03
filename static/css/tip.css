@@ -1,0 +1,72 @@
+/* ツールチップ全体のコンテナ */
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted #777;
+  cursor: help;
+  /* スマホでのタップ操作をしやすくする */
+  touch-action: manipulation; 
+}
+
+/* ポップアップするテキスト部分 */
+.tooltip .tooltip-text {
+  visibility: hidden;
+  width: 200px; /* PCでの基本幅 */
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 8px 10px; /* スマホで見やすいよう少し広げる */
+  font-size: 0.85rem;
+  line-height: 1.4;
+
+  /* 位置調整 */
+  position: absolute;
+  z-index: 100; /* 他の要素に隠れないよう数値を上げる */
+  bottom: 135%; /* 指で隠れないよう少し上に */
+  left: 50%;
+  margin-left: -100px; /* widthの半分 */
+  
+  opacity: 0;
+  transition: opacity 0.3s;
+  
+  /* スマホでタップしたときにフォーカス枠が出ないようにする */
+  outline: none;
+  pointer-events: none; /* ツールチップ自体がタップを邪魔しないように */
+}
+
+/* 吹き出しの▼部分 */
+.tooltip .tooltip-text::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #333 transparent transparent transparent;
+}
+
+/* 表示トリガーの修正 
+   hover: PCのマウスオーバー
+   focus: タブキー選択や一部スマホ操作
+   .show: スマホでのタップ（JSで付与）
+*/
+.tooltip:hover .tooltip-text,
+.tooltip:focus .tooltip-text,
+.tooltip.show .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* --- スマホ向けの調整（画面幅が狭い場合） --- */
+@media (max-width: 600px) {
+  .tooltip .tooltip-text {
+    width: 240px; /* スマホでは少し幅広に */
+    margin-left: -120px; /* 幅の半分 */
+    
+    /* 画面端で見切れるのを防ぐ簡易的な対応 */
+    /* ※完全に防ぐにはJSでの座標計算が必要ですが、CSSだけなら以下が無難です */
+    left: 50%; 
+  }
+}

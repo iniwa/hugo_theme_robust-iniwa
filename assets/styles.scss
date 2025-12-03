@@ -73,7 +73,7 @@ main {
 
 .l-container {
   position: relative;
-  max-width: 68rem;
+  max-width: 76rem;
   margin: 0 auto;
   padding: 0 1rem;
 
@@ -125,8 +125,8 @@ main {
 }
 
 .c6 { width: 50%; }
-.c4 { width: 33.26323833%; }
-.c8 { width: 66.66666%; }
+.c4 { width: 30%; } /* 調整 */
+.c8 { width: 70%; }
 
 @media (max-width: 768px) {
   .mcol {

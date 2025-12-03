@@ -1,11 +1,15 @@
 .author {
   background-color: #fff;
-  box-shadow: 0 0 0 1px rgba(63, 63, 68, 0.05), 0 1px 3px rgba(63, 63, 68, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
+  /* 影はサイトの雰囲気に合わせて少し調整（layout.cssと統一） */
+  box-shadow: 0 4px 12px rgba(84, 124, 148, 0.1);
   padding: 1rem;
-  border-radius: 4px;
+  
+  /* 角丸をサイト全体（12px）に合わせる */
+  border-radius: 12px;
   text-align: center;
 
   .author-thumb {
+    display: block;
     margin: 0 auto 1rem;
     width: 6rem;
     height: 6rem;
@@ -13,41 +17,70 @@
     background-color: #eceff1;
     background-size: cover;
     background-position: center;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    /* マウスを乗せた時の動き */
+    &:hover {
+      opacity: 0.85;       /* 少し透明に */
+      transform: scale(1.05); /* 少し拡大 */
+    }
   }
 
   .author-name {
     margin-bottom: .5rem;
     font-weight: 700;
+    color: #5d4037; /* 文字色を茶色に */
   }
 
   .author-facts {
     margin-bottom: 1rem;
+    
+    /* ▼ リストの余計な余白を消して、Flexboxで中央寄せにする */
+    padding: 0;
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap; /* 数が多い場合は折り返す */
+    gap: 10px; /* アイコン同士の隙間 */
 
     li {
-      display: inline;
+      /* display: inline; は削除（Flexboxに任せるため） */
+    }
 
-      a {
-        display: inline-block;
-        background-color: #eceff1;
-        width: 1.75rem;
-        height: 1.75rem;
-        line-height: 1.75rem;
-        text-align: center;
-        color: #333;
-        font-size: .8rem;
-        border-radius: 2px;
+    /* アイコンボタンの設定 */
+    a {
+      /* ▼ Flexboxでアイコンをボタンのど真ん中に配置 */
+      display: flex;
+      justify-content: center; /* 左右中央 */
+      align-items: center;     /* 上下中央 */
 
-        &:hover {
-          color: #fff;
-          background-color: #333;
-        }
+      background-color: #9ab4c2; /* 薄いグレー */
+      width: 1.9rem;  /* 少し大きく */
+      height: 1.9rem;
+      
+      /* line-height はズレの原因になるので削除 */
+      
+    color: #ffffff;
+    font-size: 0.9rem; /* アイコンサイズ調整 */
+    
+      /* ▼ 完全に丸くする */
+    border-radius: 50%;
+    
+    text-decoration: none;
+    transition: all 0.3s ease;
+
+      &:hover {
+        color: #fff;
+        /* ホバー時はアクセントカラー（赤茶）に */
+        background-color: #d84315; 
+        transform: translateY(-3px); /* 少し浮くアニメーション */
       }
     }
   }
 
   .author-description {
-    text-align: left;
+    text-align: center;
     font-size: .8rem;
+    color: #5d4037; /* 文字色を茶色に */
 
     p {
       margin: .5rem 0;

@@ -1,0 +1,9 @@
+.img-view{
+    display: grid;
+    grid-auto-rows: auto;
+    grid-template-columns: repeat(3, auto);
+    grid-row-gap: 0;
+    grid-column-gap: 10px;
+    justify-content: start;
+    align-content: start;
+}

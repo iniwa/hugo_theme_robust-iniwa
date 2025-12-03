@@ -1,0 +1,96 @@
+/* ----------------------------------------------- */
+/* Memos 共通スタイル                           */
+/* ----------------------------------------------- */
+
+/* 各メモのカードスタイル */
+/* 各メモのカードスタイル */
+.memo-item {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 16px;
+  /* margin-bottom: 16px;  <-- すみません、ここは元の記述をご確認ください */
+  margin-bottom: 16px;
+  
+  /* ▼ 下にあった transition をここに統合 */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  
+  /* ▼ box-shadow は初期状態 */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* ホバー時の設定（下に書いてあったものと統合・強化） */
+.memo-item:hover {
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+  transform: translateY(-4px);
+}
+
+/* 本文エリア (marked.jsのHTMLが入る) */
+.memo-content {
+  word-wrap: break-word; /* 長いURLなどがはみ出ないように折り返す */
+  color: #333; /* 文字色を少し濃く */
+}
+
+/* 本文エリア内の p タグや h タグの余白を調整 */
+.memo-content > *:first-child {
+  margin-top: 0;
+}
+.memo-content > *:last-child {
+  margin-bottom: 0;
+}
+
+/* 画像コンテナ (JSで生成) */
+.memo-resources {
+  margin-top: 12px;
+}
+
+/* 日付エリア */
+.memo-date {
+  display: block; /* ブロック要素にして右寄せを有効に */
+  margin-top: 12px; /* 本文と日付の間の隙間 */
+  font-size: 0.85em; /* 文字を少し小さく */
+  color: #888; /* 日付の色を薄く */
+  text-align: right; /* 日付を右寄せ */
+}
+
+
+/* ----------------------------------------------- */
+/* サイドバー (#memos-sidebar) 専用スタイル        */
+/* ----------------------------------------------- */
+#memos-sidebar {
+  /* ▼ 変更：高さ制限を撤廃（これで無限に伸びます） */
+  max-height: none;
+  
+  /* ▼ 変更：内部スクロールバーを削除 */
+  overflow-y: visible;
+
+  /* 見た目の調整（paddingはお好みで残してOK） */
+  padding: 8px;
+}
+
+/* 以下にあったスクロールバーのデザイン設定
+  （scrollbar-width, ::-webkit-scrollbar 等）は
+  不要になるため、すべて削除してください。
+*/
+
+/* ----------------------------------------------- */
+/* 記事内 (#memos-article) 専用スタイル          */
+/* ----------------------------------------------- */
+#memos-article {
+  /*
+   * ここには max-height や overflow を設定しない
+   * → これで、記事内はスクロールバーが出ず、全件表示される
+   */
+  margin-top: 24px;
+}
+
+/* .memo-item に transition を追加 */
+.memo-item {
+  /* （既存のプロパティはそのまま） */
+  transition: transform 0.2s ease, box-shadow 0.2s ease; /* 動きをなめらかにする */
+}
+
+
+.memo-content {
+  font-size: 0.8rem;
+}
