@@ -1,13 +1,17 @@
-name = "Robust"
+name = "Robust Iniwa Custom"
 license = "MIT"
-licenselink = "https://github.com/dim0627/hugo_theme_robust/blob/master/LICENSE.md"
-description = "Grid based theme for Hugo."
-homepage = "https://github.com/dim0627/hugo_theme_robust"
-tags = ["blog"]
-features = ["responsive", "thumbnail", "grid", "syntax highlight", "structured data", "ogp", "twitter cards"]
-min_version = '0.57.2'
+licenselink = "https://github.com/iniwa/hugo_theme_robust-iniwa/blob/master/LICENSE.md"
+description = "A customized Robust theme ."
+homepage = "https://github.com/iniwa/hugo-theme-robust-iniwa"
+tags = ["blog", "responsive", "custom"]
+features = ["sticky-sidebar", "toc", "accordion"]
+min_version = '0.60.0'
 
 [author]
-name = "Daisuke Tsuji"
-homepage = "https://yet.unresolved.xyz/"
+  name = "iniwa"
+  homepage = "https://iniwach.com"
 
+[original]
+  author = "Daisuke Tsuji"
+  homepage = "http://yet.unresolved.xyz"
+  repo = "https://github.com/dim0627/hugo_theme_robust"

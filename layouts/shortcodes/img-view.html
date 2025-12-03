@@ -1,0 +1,28 @@
+<!--追加ファイル-->
+{{ $page := .Page }}
+{{ $size := "300x" }}
+{{ $mobileSize := "150x150"}}
+
+<div class="img-view">
+    {{ range $idx, $elem := .Params }}
+        {{ with $page.Resources.GetMatch $elem }}
+            {{ $res := . }}
+            {{ $image := $res.Resize $size }}
+            {{ $imageWebP := $res.Resize (printf "%s %s webp q70" $size) }}
+
+            {{ $mobileImage := $res.Fit $mobileSize }}
+            {{ $mobileImageWebP := $res.Fit (printf "%s %s webp q70" $mobileSize) }}
+
+            <a href="{{ $res.RelPermalink }}" target="_blank">
+                <div class="thumb-img">
+                    <picture class="pc">
+                        <source srcset="{{ $imageWebP.RelPermalink }}" type="image/webp">
+                        <img src="{{ $image.RelPermalink }}" alt="{{ $elem }}" width="{{ $image.Width }}" height="{{ $image.Height }}">
+                    </picture>
+                </div>
+            </a>
+        {{ else }}
+            <p>画像「{{ $elem }}」が見つかりませんでした。</p>
+        {{ end }}
+    {{ end }}
+</div>

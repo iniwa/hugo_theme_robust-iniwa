@@ -1,71 +1,49 @@
 /* ==========================================================================
-   記事本文のデザイン (Typography)
+記事本文のデザイン (Typography)
    ========================================================================== */
 
-/* 記事タイトル (H1相当) */
+/* 記事タイトル */
 article.sn > .article-header .title {
     font-weight: 700;
     font-size: 1.8rem;
     margin-bottom: 0.5rem;
-    color: #5d4037 ; 
+    color: #5d4037; 
 }
 
-article.li .title {
-    color: #5d4037 ; 
-}
-
-/* --------------------------------------------------
-   見出し設定
-   -------------------------------------------------- */
-
-/* 大見出し (H2) - 茶色の下線 */
+/* 見出し (H2) - 茶色の下線 */
 article.sn > .article-body h2 {
     font-weight: 700;
     font-size: 1.5rem;
     color: #5d4037;
-    
-    border-bottom: 3px solid #5d4037; /* 茶色の太い下線 */
-    
+    border-bottom: 3px solid #5d4037;
     margin-top: 3rem;
     margin-bottom: 1.5rem;
     padding-bottom: 0.3rem;
 }
 
-/* 中見出し (H3) - 青い左線 */
+/* 見出し (H3) - 青い左線 */
 article.sn > .article-body h3 {
     font-weight: 700;
     font-size: 1.3rem;
     color: #5d4037;
-    
-    border-left: 6px solid #5d4037; /* 青いアクセント線 */
-    
+    border-left: 6px solid #547c94;
     margin-top: 2.5rem;
     margin-bottom: 1rem;
     padding-left: 0.8rem;
 }
 
-/* 小見出し (H4) */
+/* 見出し (H4) */
 article.sn > .article-body h4 {
     margin-top: 1.5rem;
     margin-bottom: 0.0rem;
     color: #5d4037;
 }
 
-/* --------------------------------------------------
-   本文・装飾
-   -------------------------------------------------- */
-
-/* 段落 */
-article.sn > .article-body p {
+/* 段落・リスト */
+article.sn > .article-body p,
+article.sn > .article-body ul, 
+article.sn > .article-body ol {
     margin: 1.3rem 0;
-    color: #5d4037;
-}
-
-/* リスト */
-article.sn > .article-body ul, article.sn > .article-body ol {
-    margin-top: 0.1rem;
-    margin-right: 0px;
-    margin-bottom: 0.2rem;
     color: #5d4037;
 }
 article.sn > .article-body li {
@@ -73,20 +51,9 @@ article.sn > .article-body li {
     line-height: 1.5rem;
 }
 
-/* 折りたたみ (details/summary) */
-summary {
-    margin-bottom: 0.4rem;
-}
-
-/* 強調 (em/strong) */
-article.sn > .article-body em {
-    color: #333; /* emは少し濃い黒で強調 */
-}
-
-/* 太字 (Strong) - 水色のマーカー風 */
+/* 強調 (Strong) - マーカー風 */
 article.sn > .article-body strong {
     font-weight: 700;
-    /* 蛍光ペンのような太い下線（水色） */
     background: linear-gradient(transparent 60%, #b0c4de 60%);
     box-shadow: none;
 }
@@ -101,70 +68,43 @@ article.sn > .article-body pre > code {
 /* インラインコード */
 article.sn > .article-body p code {
     font-size: 0.9rem;
-    color: #5d4037 ;
+    color: #5d4037;
 }
 
-/* ==========================================================================
-Hugoのfigureショートコードの画像サイズ調整
-   ========================================================================== */
-
-/* figureタグ内の画像は、親要素(figure)の幅に合わせる */
+/* 画像 (Figure) 調整 */
 article.sn > .article-body figure img {
-    /* 幅は親要素に合わせるが、元画像の100%を超えないようにする */
     max-width: 100% !important; 
-    
-    /* 高さは自動調整して比率を保つ */
     height: auto !important; 
-    
-    /* 影などのスタイルは維持 */
     box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-    
-    /* 中央寄せにする（お好みで） */
     display: block;
     margin: 0 auto;
 }
 
-/* もしfigureタグ自体に幅制限をかけたい場合は以下も追加 */
-/*
-article.sn > .article-body figure {
-    max-width: 100%;
-    margin: 1.5rem auto; center;
-}
-*/
-
-/* ==========================================================================
-   アコーディオン (Shortcode)
-   ========================================================================== */
+/* アコーディオン (Shortcode) */
 details.sc-accordion {
-  margin: 1.5rem 0;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  background-color: #fff;
-  overflow: hidden;
+    margin: 1.5rem 0;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #fff;
+    overflow: hidden;
 }
-
 details.sc-accordion summary {
-  padding: 0.5rem 1.5rem;
-  font-weight: 700;
-  cursor: pointer;
-  background-color: #f9f9f9; /* 薄いグレー背景 */
-  list-style: none; /* デフォルトの三角を消す（一部ブラウザ用） */
-  transition: background-color 0.2s;
+    padding: 0.8rem 1.5rem;
+    font-weight: 700;
+    cursor: pointer;
+    background-color: #f9f9f9;
+    color: #5d4037;
+    list-style: none;
+    transition: background-color 0.2s;
 }
-
-/* ホバー時の色 */
 details.sc-accordion summary:hover {
-  background-color: #f0f0f0;
+    background-color: #f0f0f0;
 }
-
-/* 開いたときの中身 */
 .sc-accordion-content {
-  padding: 1.5rem;
-  border-top: 1px solid #e0e0e0;
+    padding: 1.5rem;
+    border-top: 1px solid #e0e0e0;
 }
-
-/* アコーディオン内のテーブル調整 */
 .sc-accordion-content table {
-  width: 100%;
-  margin: 0;
+    width: 100%;
+    margin: 0;
 }

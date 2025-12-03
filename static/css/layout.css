@@ -1,7 +1,6 @@
 /* ==========================================================================
-  ベース設定・レイアウト
+  ベース設定 (全体の色・フォント・リンク)
    ========================================================================== */
-
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 80px;
@@ -14,13 +13,6 @@ body {
   font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
 }
 
-/* 全体の文字色を茶色に統一（グローバル設定） */
-h1, h2, h3, h4, h5, h6, 
-p, li, .summary, .title, 
-article .title, article .summary {
-  color: #5d4037;
-}
-
 /* リンク色 */
 a {
   color: #547c94;
@@ -31,12 +23,18 @@ a:hover {
   color: #d84315;
 }
 
-/* 角丸設定 */
+/* 全体の文字色を茶色に統一 */
+h1, h2, h3, h4, h5, h6, p, li, .summary, .title, 
+article .title, article .summary {
+  color: #5d4037;
+}
+
+/* 角丸設定 (共通) */
 img, .thumb, article, .category a, .tag a, .memo-item, .terms a, .toc {
   border-radius: 12px;
 }
 
-/* カードデザイン */
+/* カードデザイン (背景白 + 影) */
 article, .l-sidebar aside, .memo-item {
   background-color: #ffffff;
   box-shadow: 0 4px 12px rgba(84, 124, 148, 0.1);
@@ -45,63 +43,8 @@ article, .l-sidebar aside, .memo-item {
 
 
 /* ==========================================================================
-  目次 (ToC) - 記事内の見出しリストではなく「目次ボックス」のデザイン
+  ホバーアクション (記事カード・LATESTS・Memos)
    ========================================================================== */
-
-/* 目次全体を囲むボックス */
-.toc {
-  background-color: #f0f4f8; 
-  border: 1px solid #d1dbd4; 
-  border-radius: 12px;
-
-  /* 余白をたっぷりとる */
-  padding: 1.5rem 2.5rem 1.5rem 2rem; 
-
-  margin: 0 0; 
-  display: block;
-
-  /* 幅を中身に合わせる */
-  width: fit-content; 
-  width: -moz-fit-content;
-  max-width: 100%;
-}
-
-/* 目次の中のリスト */
-.toc nav > ul {
-  list-style: none;
-  padding: 0;
-  background: none;
-  line-height: 1rem;
-  font-weight: 600;
-}
-
-.toc ul ul > li {
-    margin: .1rem;
-    font-weight: 1;
-}
-
-.toc ul ul {
-  padding-left: 1.5rem;
-  margin-top: 0.5rem;
-}
-
-/* 目次の文字 */
-.toc a {
-  color: #547c94;
-  font-weight: 600;
-  font-size: 0.9rem;
-  text-decoration: none;
-}
-.toc a:hover {
-  color: #d84315;
-  text-decoration: underline;
-}
-
-
-/* ==========================================================================
-  ホバーアクション（LATESTS含む）
-   ========================================================================== */
-
 article.li, .memo-item, article.lism {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
@@ -113,20 +56,8 @@ article.li:hover, .memo-item:hover, article.lism:hover {
 
 
 /* ==========================================================================
-  ページネーション
+  ヘッダー & フッター
    ========================================================================== */
-.pagination {
-  display: flex;
-  justify-content: center;
-  list-style: none;
-  padding: 0;
-}
-
-
-/* ==========================================================================
-  ヘッダー
-   ========================================================================== */
-
 .l-header {
   position: fixed;
   top: 0;
@@ -146,14 +77,20 @@ article.li:hover, .memo-item:hover, article.lism:hover {
 }
 
 .l-header .logo a {
-  color: #5d4037; 
+  color: #5d4037 !important; 
+}
+
+.l-footer {
+  background-color: #fdfcf8;
+  border-top: 1px solid #e0e0e0;
+  color: #5d4037;
 }
 
 
 /* ==========================================================================
-  サイドバーパーツ
+  サイドバーパーツ (ボタン・アイコン)
    ========================================================================== */
-
+/* タグ・アーカイブなどのボタン */
 .terms a, .archives a, .tag a, .category a {
   background-color: #9ab4c2; 
   color: #ffffff;
@@ -163,21 +100,66 @@ article.li:hover, .memo-item:hover, article.lism:hover {
   padding: 6px 10px;
   margin-bottom: 4px;
   display: inline-block;
+  transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
 }
 
 .terms a:hover, .archives a:hover, .tag a:hover, .category a:hover {
   background-color: #d84315;
   color: #ffffff;
+  transform: translateY(-3px);
+  box-shadow: 0 5px 10px rgba(84, 124, 148, 0.3);
 }
 
-.l-sidebar .author a, 
-.l-sidebar .social a {
-  border-radius: 50% !important;
+/* Author SNSアイコン */
+.l-sidebar .author a, .l-sidebar .social a {
+  border-radius: 50%;
 }
 
 
 /* ==========================================================================
-  グリッドシステム & Sticky
+  目次ボックス (.toc) - ※記事内リストではなく「箱」のデザイン
+   ========================================================================== */
+.toc {
+  background-color: #f0f4f8 !important; 
+  border: 1px solid #d1dbd4 !important; 
+  padding: 1.5rem 2.5rem 1.5rem 2rem !important; 
+  margin: 2rem 0 !important; 
+  display: block !important;
+  width: fit-content !important; 
+  width: -moz-fit-content !important;
+  max-width: 100% !important;
+}
+
+.toc nav > ul {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: none !important;
+}
+
+.toc ul ul {
+  padding-left: 1.5rem !important;
+  margin-top: 0.5rem !important;
+}
+
+.toc a {
+  color: #547c94 !important;
+  font-weight: 600 !important;
+  font-size: 0.95rem !important;
+  text-decoration: none !important;
+}
+.toc a:hover {
+  color: #d84315 !important;
+  text-decoration: underline !important;
+}
+
+/* 旧スタイルの打ち消し */
+.toc { padding: 0 !important; background: none !important; }
+.toc nav > ul { background: none !important; padding: 0 !important; }
+
+
+/* ==========================================================================
+  グリッドシステム & Stickyサイドバー
    ========================================================================== */
 .mcol {
   box-sizing: border-box;
@@ -228,72 +210,4 @@ article.li:hover, .memo-item:hover, article.lism:hover {
 @media screen and (max-width: 767px) {
   .mrow { display: block; margin: 0; }
   .mcol { width: 100%; padding: 0; }
-}
-
-
-/* ==========================================================================
-  フッター
-   ========================================================================== */
-.l-footer {
-  background-color: #fdfcf8;
-  border-top: 1px solid #e0e0e0;
-  color: #5d4037;
-}
-
-/* ==========================================================================
-  サイドバーパーツ（タグ・アーカイブなど）
-   ========================================================================== */
-
-/* ボタンの基本設定 */
-.terms a, .archives a, .tag a, .category a {
-  background-color: #9ab4c2 !important; 
-  color: #ffffff !important;
-  border: none !important;
-  font-size: 0.85rem !important;
-  line-height: 1.2 !important;
-  padding: 6px 10px !important;
-  margin-bottom: 4px !important;
-  display: inline-block !important;
-
-  /* ▼ 追加：色だけでなく、動き（transform）と影（box-shadow）も滑らかにする */
-  transition: background-color 0.3s, color 0.3s, transform 0.3s, box-shadow 0.3s !important;
-}
-
-/* ホバー時の設定 */
-.terms a:hover, .archives a:hover, .tag a:hover, .category a:hover {
-  background-color: #d84315 !important;
-  color: #ffffff !important;
-
-  /* ▼ 追加：フワッと浮き上がる動き */
-  transform: translateY(-3px) !important; /* 小さいボタンなので控えめに3px浮かす */
-  box-shadow: 0 5px 10px rgba(84, 124, 148, 0.3) !important; /* 影を落とす */
-}
-
-/* ==========================================================================
-  サイドバーパーツ（タグ・アーカイブなど）
-   ========================================================================== */
-
-/* ボタンの基本設定 */
-.terms a, .archives a, .tag a, .category a {
-  background-color: #9ab4c2 !important; 
-  color: #ffffff !important;
-  border: none !important;
-  font-size: 0.85rem !important;
-  line-height: 1.2 !important;
-  padding: 6px 10px !important;
-  margin-bottom: 4px !important;
-  display: inline-block !important;
-
-  /* ▼ 追加：色だけでなく、動き（transform）と影（box-shadow）も滑らかにする */
-  transition: background-color 0.3s, color 0.3s, transform 0.3s, box-shadow 0.3s !important;
-}
-
-/* ホバー時の設定 */
-.terms a:hover, .archives a:hover, .tag a:hover, .category a:hover {
-  background-color: #d84315 !important;
-  color: #ffffff !important;
-
-  /* ▼ 追加：フワッと浮き上がる動き */
-  transform: translateY(-3px) !important; /* 小さいボタンなので控えめに3px浮かす */
-  box-shadow: 0 5px 10px rgba(84, 124, 148, 0.3) !important; /* 影を落とす */
 }

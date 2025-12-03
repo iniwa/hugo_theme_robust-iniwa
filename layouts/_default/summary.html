@@ -11,7 +11,7 @@
       <li><i class="fas fa-sync" aria-hidden="true"></i><time datetime="{{ .Lastmod.Format "2006-01-02T15:04:05JST" }}">{{ .Lastmod.Format ( .Site.Params.dateformat | default "Jan 2, 2006") }}</time></li>
       {{ end }}
       {{ with .Section }}
-      <li><i class="fas fa-bookmark" aria-hidden="true"></i><a href="{{ $.Site.BaseURL }}{{ . | urlize }}/">{{ . | upper }}</a></li>
+  <!--<li><i class="fas fa-bookmark" aria-hidden="true"></i><a href="{{ $.Site.BaseURL }}{{ . | urlize }}/">{{ . | upper }}</a></li> *fas fa-bookmarkの削除 -->
       {{ end }}
       {{ if eq (getenv "HUGO_ENV") "DEV" }}
       <li>{{ .WordCount }} Words</li>
@@ -21,7 +21,7 @@
       {{ end }}
     </ul>
 
-    {{ partial "share.html" . }}
+<!--{{ partial "share.html" . }} *シェアボタンの削除 -->
   </header>
 
   {{ if .Params.toc }}

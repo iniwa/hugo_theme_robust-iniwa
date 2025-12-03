@@ -1,0 +1,7 @@
+<!--追加ファイル-->
+<details class="sc-accordion">
+    <summary>{{ .Get "title" | default "Details" }}</summary>
+    <div class="sc-accordion-content">
+        {{ .Inner | markdownify }}
+    </div>
+</details>

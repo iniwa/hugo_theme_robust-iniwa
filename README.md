@@ -1,3 +1,38 @@
+[Robust](https://github.com/dim0627/hugo_theme_robust)というテーマをアレンジしました。  
+AIを利用してコードを書いているため、最適化等は不十分かと思われます。  
+
+変更した箇所にはコメントアウトを入れてるつもりですが、抜けがあるかもしれません。  
+
+**`layouts/partials/meta.html`は修正を推奨します**  
+
+このテーマを利用する際は、config.tomlに  
+```toml
+[taxonomies]
+tag = "tags"
+archive = "archives"
+```
+を追加してください。  
+
+私のサイト、[いにわの庭](https://diary.iniwach.com)」でこのテーマを実際に使用しています。  
+
+## 変更点
+ - 全体的なデザインの変更
+ - マウスホバーの実装
+ - archivesの追加（taxonomies）
+ - ポップアップ型の注釈追加
+ - 更新日付の表示
+ - シェアボタンの削減
+ - OGPの大幅改善
+ - cssファイルの棲み分け
+ - ページネーションの実装
+ - shortcodeの実装
+   - アコーディオンの実装
+   - 画像のタイル表示
+   - 注釈のポップアップ表示
+
+以下オリジナルREADME
+---
+
 This theme is maintained by [Ress](https://github.com/ress997).
 
 # What is this.

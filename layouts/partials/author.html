@@ -3,13 +3,16 @@
   <header>AUTHOR</header>
   <div class="author">
     {{ with .thumbnail }}
-    <div class="author-thumb" style="background-image: url({{ . | absURL }});"></div>
+    <a href="/about_me" class="author-thumb" style="background-image: url({{ . | absURL }}); display: block;"></a> <!--AuthorアイコンにURL付与-->
     {{ end }}
     <div class="author-name">{{ .name }}</div>
     <ul class="author-facts">
       {{ with .facebook }}<li><a href="{{ . }}" rel="noopener nofollow" target="_blank"><i class="fab fa-facebook" aria-hidden="true"></i></a></li>{{ end }}
-      {{ with .twitter }}<li><a href="{{ . }}" rel="noopener nofollow" target="_blank"><i class="fab fa-twitter" aria-hidden="true"></i></a></li>{{ end }}
+      {{ with .twitter }}<li><a href="{{ . }}" rel="noopener nofollow" target="_blank"><i class="fa-brands fa-x-twitter"></i></a></li>{{ end }} <!--Xのアイコンへ変更-->
       {{ with .github }}<li><a href="{{ . }}" rel="noopener nofollow" target="_blank"><i class="fab fa-github" aria-hidden="true"></i></a></li>{{ end }}
+      {{ with .mail }}<li><a href="{{ . }}" rel="nofollow" target="_blank"><i class="fas fa-envelope" aria-hidden="true"></i></a></li>{{ end }} <!--追加-->
+      {{ with .Twitch }}<li><a href="{{ . }}" rel="nofollow" target="_blank"><i class="fa-brands fa-twitch"></i></a></li>{{ end }} <!--追加-->
+      {{ with .YouTube }}<li><a href="{{ . }}" rel="nofollow" target="_blank"><i class="fa-brands fa-youtube"></i></a></li>{{ end }} <!--追加-->
     </ul>
     <div class="author-description">{{ .description | safeHTML }}</div>
   </div>

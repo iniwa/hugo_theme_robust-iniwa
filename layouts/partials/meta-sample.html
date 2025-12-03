@@ -1,0 +1,55 @@
+<!--私が実際に使用している`meta.html`へ寄せたものです。-->
+<!--デフォルトではこのhtmlは読み込まれない（はず）です。OGP周りを改善してるので参考になれば幸いです。-->
+
+<meta name="pinterest" content="nopin">
+<meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+<link rel="dns-prefetch preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="dns-prefetch preconnect" href="https://use.fontawesome.com" crossorigin>
+<link href="https://use.fontawesome.com/releases/v6.7.2/css/all.css" rel="stylesheet">
+<link rel="shortcut icon" href="/images/favicon.ico" />
+<meta name="theme-color" content="#263238">
+{{ with .Site.Params.contact }}<meta name="contact" content="{{ . }}">{{ end }}
+{{ hugo.Generator }}
+
+<link rel="apple-touch-icon" href="{{ .Site.BaseURL }}images/logo.png">
+
+{{ range .AlternativeOutputFormats }}
+<link rel="{{ .Rel }}" type="{{ .MediaType.Type | html }}" href="{{ .Permalink | safeURL }}" title="{{ $.Site.Title | safeHTML }}">
+{{ end }}
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4912448532674669"
+     crossorigin="anonymous"></script>
+
+<meta charset="utf-8">
+<meta property="og:site_name" content="{{ .Site.Title }}">
+<meta property="og:url" content="{{ .Permalink }}">
+
+{{ if .IsHome }}
+  <meta name="description" content="sample text">
+  <meta property="og:title" content="{{ .Site.Title }}">
+  <meta property="og:description" content="sample text">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://diary.iniwach.com/images/thumbnail/Author.png">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@sample">
+  <meta name="twitter:creator" content="@sample">
+  <meta name="twitter:image" content="https://sample.com/images/thumbnail/Author.png">
+
+{{ else if .IsPage }}
+  <meta name="description" content="{{ .Summary | plainify | truncate 160 }}">
+  <meta property="og:title" content="{{ .Title }}">
+  <meta property="og:description" content="{{ .Summary | plainify | truncate 160 }}">
+  <meta property="og:type" content="article">
+  <meta property="og:image" content="{{ $ogImageUrl }}">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@sample">
+  <meta name="twitter:creator" content="@sample">
+  <meta name="twitter:image" content="{{ $ogImageUrl }}">
+
+{{ else }}
+  <meta property="og:title" content="{{ .Title }}">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://sample.com/images/thumbnail/Author.png">
+{{ end }}

@@ -1,0 +1,4 @@
+<!-- 追加ファイル -->
+{{ with .Site.Taxonomies.archives }}
+{{ partial "taxonomy.html" (dict "context" $.Site "key" "archives" "value" . "baseurl" $.Site.BaseURL) }}
+{{ end }}

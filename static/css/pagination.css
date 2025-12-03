@@ -1,26 +1,17 @@
-/*------------------------------------
-Pagination
------------------------------------- */
+/* ==========================================================================
+   Pagination (Base & Custom)
+   ========================================================================== */
 #paging {
     margin: auto;
     text-align: center;
 }
-#paging ul {
-    padding: 0;
-}
-#paging i {
-    font-weight: bold;
-}
-#paging .not-allow i {
-    font-weight: normal;
-    opacity: 0.3;
-}
 .pagination {
     display: flex;
     justify-content: center;
-    margin: 0;
+    margin: 20px 0 40px 0;
     list-style: none;
     border-radius: .25rem;
+    padding: 0;
 }
 .pagination li {
     flex: 1 1 42px;
@@ -29,64 +20,33 @@ Pagination
     float: left;
 }
 
+/* 通常のボタン */
 .pagination > li > a {
     display: inline-block;
     width: 100%;
-    padding: 0px 0;
-    color: inherit;
-    background: #fff;
-    /*border: 1px solid #ddd;*/
-    border-right: 0;
+    padding: 0;
     text-align: center;
-}
-.pagination > li:last-child > a,
-.pagination > .not-allow:first-child > a:hover {
-    /*border-right: 1px solid #ddd;*/
-}
-.pagination > .active > a,
-.pagination > li > a:hover {
-    color: #fff;
-    background: #906dd3;
-}
-.pagination > .active > a:hover,
-.pagination > .not-allow > a:hover {
-    cursor: text;
-}
-.post #paging {
-    margin: 20px 0 40px 0;
+    
+    /* デザイン */
+    color: #5d4037; /* 文字：茶色 */
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    margin: 0 4px;
+    border-radius: 8px;
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
 }
 
-.page-item {
-    margin-left: 5px;
-    margin-right: 5px;
-}
-
-/* ==========================================================================
-   ページネーションの色修正（庭テーマ用）
-   ========================================================================== */
-
-/* 通常のページ番号 */
-.pagination > li > a {
-  color: #5d4037 !important; /* 文字色：茶色 */
-  background-color: #ffffff !important;
-  border: 1px solid #e0e0e0 !important; /* 薄い枠線 */
-  margin: 0 4px !important; /* ボタン同士の隙間 */
-  border-radius: 8px !important; /* 角丸 */
-  
-  /* ホバー時の動きを滑らかに */
-  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
-}
-
-/* 現在のページ（アクティブ） */
+/* アクティブ（現在のページ） */
 .pagination > .active > a {
-  background-color: #547c94 !important; /* テーマのくすみブルー */
-  color: #ffffff !important;
-  border-color: #547c94 !important;
+    background-color: #547c94; /* テーマのくすみブルー */
+    color: #ffffff;
+    border-color: #547c94;
 }
 
 /* ホバー時 */
 .pagination > li > a:hover {
-  background-color: #d84315 !important; /* アクセントの赤茶 */
-  color: #ffffff !important;
-  border-color: #d84315 !important;
+    background-color: #d84315; /* アクセントの赤茶 */
+    color: #ffffff;
+    border-color: #d84315;
+    cursor: pointer;
 }
