@@ -12,14 +12,14 @@ archive = "archives"
 
 [params]
   theme_variant = "garden"   # もしくは`tech`。色を変数で指定しています。
+  memos_url = ""  #不要な方は空欄にしておいてください。
 ```
 を追加してください。  
+色を変えたい場合は`static/css/variables.css`で良い感じにできると思います。  
 
-私のサイト、「[いにわの庭](https://diary.iniwach.com)」でこのテーマを実際に使用しています。  
+また、フッターにプライバシーポリシーと免責事項へのリンクを設置しています。  
+`content/privacy.md`と`content/notice.md`を作成してください。  
 
-以下は`いにわの庭`にのみ実装している要素です。  
- - サイドバーでmemosへ公開投稿したものの表示  
- - OGP用画像の自動生成（`meta.html`が一部違います）
 
 ## 変更点
  - htmlファイルによるデザインの変更
@@ -37,6 +37,7 @@ archive = "archives"
  - サイドバーが付いてくる･独立してスクロール
  - ページネーションの実装
  - OGPの改善
+ - memosの表示
 
 ## 各Shortcodeの使い方  
 ### アコーディオン  
