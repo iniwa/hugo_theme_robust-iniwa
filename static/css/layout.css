@@ -26,7 +26,7 @@ a:hover {
 /* 全体の文字色を茶色に統一 */
 h1, h2, h3, h4, h5, h6, p, li, .summary, .title, 
 article .title, article .summary {
-  color: #5d4037;
+  color: #5d4037 !important;
 }
 
 /* 角丸設定 (共通) */
