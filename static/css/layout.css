@@ -65,7 +65,7 @@ article.li:hover, .memo-item:hover, article.lism:hover {
   width: 100%;
   z-index: 1000;
   transition: transform 0.3s ease;
-  background-color: rgba(253, 252, 248, 0.95);
+  background-color: var(--color-bg);
   border-bottom: none; 
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
@@ -90,7 +90,7 @@ article.li:hover, .memo-item:hover, article.lism:hover {
 /* ==========================================================================
   サイドバーパーツ (ボタン・アイコン)
    ========================================================================== */
-/* タグ・アーカイブなどのボタン */
+/* 1. タグ・アーカイブなどのボタン */
 .terms a, .archives a, .tag a, .category a {
   background-color: var(--color-btn-bg); 
   color: #ffffff;
@@ -104,15 +104,23 @@ article.li:hover, .memo-item:hover, article.lism:hover {
 }
 
 .terms a:hover, .archives a:hover, .tag a:hover, .category a:hover {
-  background-color: var(--color-hover);
+  background-color: var(--color-hover); 
   color: #ffffff;
   transform: translateY(-3px);
   box-shadow: 0 5px 10px rgba(84, 124, 148, 0.3);
 }
-
-/* Author SNSアイコン */
+/* 2. Author SNSアイコン */
 .l-sidebar .author a, .l-sidebar .social a {
   border-radius: 50%;
+  /* ホバーアニメーションを有効化 */
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+/* ▼ 追加：SNSアイコンのホバー色も変数で上書きする */
+.l-sidebar .author a:hover, .l-sidebar .social a:hover {
+  background-color: var(--color-hover);
+  color: #ffffff;
+  transform: translateY(-3px);
 }
 
 

@@ -52,7 +52,7 @@
 
 /* ホバー時 */
 .pagination > li > a:hover {
-    background-color: #d84315;
+    background-color: var(--color-hover);
     color: #ffffff;
     transform: translateY(-2px); /* 少し浮く */
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
