@@ -17,6 +17,9 @@ archive = "archives"
 を追加してください。  
 色を変えたい場合は`static/css/variables.css`で良い感じにできると思います。  
 
+また、フッターにプライバシーポリシーと免責事項へのリンクを設置しています。  
+`content/privacy.md`と`content/notice.md`を作成してください。  
+
 
 ## 変更点
  - htmlファイルによるデザインの変更
