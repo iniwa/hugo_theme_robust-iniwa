@@ -13,14 +13,10 @@ archive = "archives"
 を追加してください。  
 
 私のサイト、「[いにわの庭](https://diary.iniwach.com)」でこのテーマを実際に使用しています。  
-<details>
-<summary><strong>`いにわの庭`との相違点</strong></summary>
+
 以下は`いにわの庭`にのみ実装している要素です。  
- - サイドバーでmemosへ公開投稿したものの表示
+ - サイドバーでmemosへ公開投稿したものの表示  
  - OGP用画像の自動生成（`meta.html`が一部違います）
-
-</details>
-
 
 ## 変更点
  - htmlファイルによるデザインの変更
