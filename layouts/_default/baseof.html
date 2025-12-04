@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <title>{{ block "title" . }}{{ end }}{{ .Site.Title }}</title>
     {{ partial "meta.html" . }}
-  <link rel="canonical" href="{{ .Permalink }}"> <!-- cssの読み込み順序変更 -->
+    <link rel="canonical" href="{{ .Permalink }}">
     {{ with .Site.Params.googlefonts }}
     <link href="{{ . }}" rel="stylesheet">
     {{ else }}
@@ -40,24 +40,23 @@
 {{ with .Site.Params.fontfamily }} body { font-family: {{ . | safeCSS }}; } {{ end }}
 {{ with .Site.Params.logofontfamily }} .h-logo { font-family: {{ . | safeCSS }}; } {{ end }}
     </style>
-    <!--色の変数指定-->
+
     <link rel="stylesheet" href="/css/variables.css">
-    <!-- cssの読み込み順序変更、変更の細分化 -->
-    <link rel="stylesheet" href="/css/layout.css"> 
+    <link rel="stylesheet" href="/css/layout.css">
     <link rel="stylesheet" href="/css/content.css">
     <link rel="stylesheet" href="/css/pagination.css">
     <link rel="stylesheet" href="/css/grid.css">
     <link rel="stylesheet" href="/css/tip.css">
+    <link rel="stylesheet" href="/css/memos-style.css">
     {{ if and .Site.Config.Services.GoogleAnalytics.ID (ne (getenv "HUGO_ENV") "DEV") }}
-<script async src="https://www.googletagmanager.com/gtag/js?id={{ .Site.Config.Services.GoogleAnalytics.ID }}"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', '{{ .Site.Config.Services.GoogleAnalytics.ID }}');
-</script>
-{{ end }}
+    <script async src="https://www.googletagmanager.com/gtag/js?id={{ .Site.Config.Services.GoogleAnalytics.ID }}"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', '{{ .Site.Config.Services.GoogleAnalytics.ID }}');
+    </script>
+    {{ end }}
   </head>
   <body data-theme="{{ .Site.Params.theme_variant | default "garden" }}">
     <header class="l-header">
@@ -79,11 +78,12 @@
         </div>
         <div class="mcol c4">
           <aside class="l-sidebar">
-            {{ partial "author.html" . }}  <!-- サイドバーの順序変更、archives追加 -->
+            {{ partial "author.html" . }}
             {{ partial "archives.html" . }}
             {{ partial "tags.html" . }}
             {{ partial "categories.html" . }}
             {{ partial "latests.html" . }}
+            <!-- {{ partial "memos.html" . }}  -->
           </aside>
         </div>
       </div>
@@ -105,36 +105,32 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.0/highlight.min.js" crossorigin="anonymous"></script>
     <script>hljs.initHighlightingOnLoad();</script>
     {{ end }}
-  <!-- ヘッダーが付いてくるやつ -->
-  <script>
-  (function() {
-    const header = document.querySelector('.l-header');
-    let lastScrollY = 0; // 前回のスクロール位置
+    
+    <script>
+    (function() {
+      const header = document.querySelector('.l-header');
+      let lastScrollY = 0;
 
-    window.addEventListener('scroll', function() {
-      const currentScrollY = window.scrollY; // 現在のスクロール位置
+      window.addEventListener('scroll', function() {
+        const currentScrollY = window.scrollY;
 
-      // 1. まだページのトップ付近なら、常に表示する
-      if (currentScrollY < 60) {
-        header.classList.remove('is-hidden');
+        // ページのトップ付近なら常に表示
+        if (currentScrollY < 60) {
+          header.classList.remove('is-hidden');
+          lastScrollY = currentScrollY;
+          return;
+        }
+
+        // 下スクロールで隠す、上スクロールで出す
+        if (currentScrollY > lastScrollY) {
+          header.classList.add('is-hidden');
+        } else {
+          header.classList.remove('is-hidden');
+        }
+
         lastScrollY = currentScrollY;
-        return;
-      }
-
-      // 2. 下にスクロールした時 → 隠す
-      // （現在位置が前回より大きく、かつ一定量スクロールしている場合）
-      if (currentScrollY > lastScrollY) {
-        header.classList.add('is-hidden');
-      } 
-      // 3. 上にスクロールした時 → 出す
-      else {
-        header.classList.remove('is-hidden');
-      }
-
-      // 現在の位置を保存
-      lastScrollY = currentScrollY;
-    }, { passive: true });
-  })();
-</script>
+      }, { passive: true });
+    })();
+    </script>
   </body>
 </html>
