@@ -1,7 +1,9 @@
 <meta name="pinterest" content="nopin">
 <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
-<link rel="dns-prefetch preconnect" href="https://fonts.gstatic.com"  crossorigin>
-<link rel="dns-prefetch preconnect" href="https://use.fontawesome.com"  crossorigin>
+<link rel="dns-prefetch preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="dns-prefetch preconnect" href="https://use.fontawesome.com" crossorigin>
+<link href="https://use.fontawesome.com/releases/v6.7.2/css/all.css" rel="stylesheet">
+<link rel="shortcut icon" href="/images/favicon.ico" />
 <meta name="theme-color" content="#263238">
 {{ with .Site.Params.contact }}<meta name="contact" content="{{ . }}">{{ end }}
 {{ hugo.Generator }}
@@ -12,3 +14,57 @@
 <link rel="{{ .Rel }}" type="{{ .MediaType.Type | html }}" href="{{ .Permalink | safeURL }}" title="{{ $.Site.Title | safeHTML }}">
 {{ end }}
 
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4912448532674669"
+      crossorigin="anonymous"></script>
+
+<meta charset="utf-8">
+<meta property="og:site_name" content="{{ .Site.Title }}">
+<meta property="og:url" content="{{ .Permalink }}">
+
+{{ if .IsHome }}
+  <meta name="description" content="example text。">
+  <meta property="og:title" content="{{ .Site.Title }}">
+  <meta property="og:description" content="example text。">
+  <meta property="og:type" content="website">
+  
+  {{ $homeImage := "images/thumbnail/Author.png" | absURL }}
+  <meta property="og:image" content="{{ $homeImage }}">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@iniwach">
+  <meta name="twitter:creator" content="@iniwach">
+  <meta name="twitter:image" content="{{ $homeImage }}">
+
+{{ else if .IsPage }}
+  <meta name="description" content="{{ .Summary | plainify | truncate 160 }}">
+  <meta property="og:title" content="{{ .Title }}">
+  <meta property="og:description" content="{{ .Summary | plainify | truncate 160 }}">
+  <meta property="og:type" content="article">
+
+  {{/* 記事画像の取得ロジック */}}
+  {{ $ogImageUrl := "" }}
+
+  {{ if .Params.thumbnail }}
+    {{/* 1. thumbnailが指定されていればそれを使う */}}
+    {{ $ogImageUrl = .Params.thumbnail | absURL }}
+  {{ else if .Params.image }}
+    {{/* 2. imageが指定されていればそれを使う */}}
+    {{ $ogImageUrl = .Params.image | absURL }}
+  {{ else }}
+    {{/* 3. 画像がない場合はサイトのデフォルト画像（Author.pngなど）を使う */}}
+    {{ $ogImageUrl = "images/thumbnail/Author.png" | absURL }}
+  {{ end }}
+
+  <meta property="og:image" content="{{ $ogImageUrl }}">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@iniwach">
+  <meta name="twitter:creator" content="@iniwach">
+  <meta name="twitter:image" content="{{ $ogImageUrl }}">
+
+{{ else }}
+  {{/* その他のページ（アーカイブなど） */}}
+  <meta property="og:title" content="{{ .Title }}">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="{{ "images/thumbnail/Author.png" | absURL }}">
+{{ end }}
