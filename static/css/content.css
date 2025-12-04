@@ -7,15 +7,15 @@ article.sn > .article-header .title {
     font-weight: 700;
     font-size: 1.8rem;
     margin-bottom: 0.5rem;
-    color: #5d4037; 
+    color: var(--color-text); 
 }
 
 /* 見出し (H2) - 茶色の下線 */
 article.sn > .article-body h2 {
     font-weight: 700;
     font-size: 1.5rem;
-    color: #5d4037;
-    border-bottom: 3px solid #5d4037;
+    color: var(--color-text);
+    border-bottom: 3px solid var(--color-text);
     margin-top: 3rem;
     margin-bottom: 1.5rem;
     padding-bottom: 0.3rem;
@@ -25,8 +25,8 @@ article.sn > .article-body h2 {
 article.sn > .article-body h3 {
     font-weight: 700;
     font-size: 1.3rem;
-    color: #5d4037;
-    border-left: 6px solid #5d4037;
+    color: var(--color-text);
+    border-left: 6px solid var(--color-text);
     margin-top: 2.5rem;
     margin-bottom: 1rem;
     padding-left: 0.8rem;
@@ -36,19 +36,19 @@ article.sn > .article-body h3 {
 article.sn > .article-body h4 {
     margin-top: 0.4rem;
     margin-bottom: 1rem;
-    color: #5d4037;
+    color: var(--color-text);
 }
 
 /* 段落・リスト */
 article.sn > .article-body ul, 
 article.sn > .article-body ol {
     margin: 0 0 0;
-    color: #5d4037;
+    color: var(--color-text);
 }
 
 article.sn > .article-body p {
     margin: 0.5rem 0 0.5rem;
-    color: #5d4037;
+    color: var(--color-text);
     line-height: 1.55rem;
 }
 
@@ -60,13 +60,13 @@ article.sn > .article-body li {
 /* 強調 (Strong) - マーカー風 */
 article.sn > .article-body strong {
     font-weight: 700;
-    background: linear-gradient(transparent 60%, #b0c4de 60%);
+    background: linear-gradient(transparent 60%, var(--color-header-border) 60%);
     box-shadow: none;
 }
 
 /* 太字 */
 article.sn > .article-body em {
-    color: #5d4037;
+    color: var(--color-text);
 }
 
 /* コードブロック */
@@ -79,14 +79,14 @@ article.sn > .article-body pre > code {
 /* インラインコード */
 article.sn > .article-body p code {
     font-size: 0.9rem;
-    color: #5d4037;
+    color: var(--color-text);
 }
 
 /* 画像 (Figure) 調整 */
 article.sn > .article-body figure img {
     max-width: 100% !important; 
     height: auto !important; 
-    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    box-shadow: var(--shadow-base),var(--shadow-base);
     display: block;
     margin: 0 auto;
 }
@@ -104,7 +104,7 @@ details.sc-accordion summary {
     font-weight: 700;
     cursor: pointer;
     background-color: #f9f9f9;
-    color: #5d4037;
+    color: var(--color-text);
     list-style: none;
     transition: background-color 0.2s;
 }

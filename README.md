@@ -9,6 +9,9 @@
 [taxonomies]
 tag = "tags"
 archive = "archives"
+
+[params]
+  theme_variant = "garden"   # もしくは`tech`。色を変数で指定しています。
 ```
 を追加してください。  
 
@@ -26,6 +29,7 @@ archive = "archives"
  - cssファイルの棲み分け･編集
    - マウスホバーの実装
    - その他cssによるデザイン変更
+   - 色指定を変数に
  - shortcodeの実装
    - アコーディオンの実装
    - 画像のタイル表示

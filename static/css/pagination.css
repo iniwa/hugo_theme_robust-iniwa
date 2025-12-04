@@ -32,7 +32,7 @@
     padding: 0;
     text-align: center;
     
-    color: #5d4037;
+    color: var(--color-text);
     background-color: #ffffff;
     border: none; 
     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
@@ -44,9 +44,9 @@
 
 /* アクティブ（現在のページ） */
 .pagination > .active > a {
-    background-color: #547c94; /* テーマのくすみブルー */
+    background-color: var(--color-accent); /* テーマのくすみブルー */
     color: #ffffff;
-    border-color: #547c94;
+    border-color: var(--color-accent);
     pointer-events: none; /* クリック不可に */
 }
 

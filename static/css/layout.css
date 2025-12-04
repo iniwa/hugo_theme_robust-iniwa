@@ -8,36 +8,36 @@ html {
 
 body {
   padding-top: 70px;
-  background-color: #fdfcf8; 
-  color: #5d4037; 
+  background-color: var(--color-bg); 
+  color: var(--color-text); 
   font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
 }
 
 /* リンク色 */
 a {
-  color: #547c94;
+  color: var(--color-accent);
   text-decoration: none;
   transition: color 0.3s, background-color 0.3s;
 }
 a:hover {
-  color: #d84315;
+  color: var(--color-hover);
 }
 
 /* 全体の文字色を茶色に統一 */
 h1, h2, h3, h4, h5, h6, p, li, .summary, .title, 
 article .title, article .summary {
-  color: #5d4037 !important;
+  color: var(--color-text) !important;
 }
 
 /* 角丸設定 (共通) */
 img, .thumb, article, .category a, .tag a, .memo-item, .terms a, .toc {
-  border-radius: 12px;
+  border-radius: var(--radius-base);
 }
 
 /* カードデザイン (背景白 + 影) */
 article, .l-sidebar aside, .memo-item {
   background-color: #ffffff;
-  box-shadow: 0 4px 12px rgba(84, 124, 148, 0.1);
+  box-shadow: 0 4px var(--radius-base) var(--shadow-base);
   border: none;
 }
 
@@ -77,13 +77,13 @@ article.li:hover, .memo-item:hover, article.lism:hover {
 }
 
 .l-header .logo a {
-  color: #5d4037 !important; 
+  color: var(--color-text) !important; 
 }
 
 .l-footer {
-  background-color: #fdfcf8;
+  background-color: var(--color-bg);
   border-top: 1px solid #e0e0e0;
-  color: #5d4037;
+  color: var(--color-text);
 }
 
 
@@ -92,7 +92,7 @@ article.li:hover, .memo-item:hover, article.lism:hover {
    ========================================================================== */
 /* タグ・アーカイブなどのボタン */
 .terms a, .archives a, .tag a, .category a {
-  background-color: #9ab4c2; 
+  background-color: var(--color-btn-bg); 
   color: #ffffff;
   border: none;
   font-size: 0.85rem;
@@ -104,7 +104,7 @@ article.li:hover, .memo-item:hover, article.lism:hover {
 }
 
 .terms a:hover, .archives a:hover, .tag a:hover, .category a:hover {
-  background-color: #d84315;
+  background-color: var(--color-hover);
   color: #ffffff;
   transform: translateY(-3px);
   box-shadow: 0 5px 10px rgba(84, 124, 148, 0.3);
@@ -151,13 +151,13 @@ article.li:hover, .memo-item:hover, article.lism:hover {
 }
 
 .toc a {
-  color: #547c94;
+  color: var(--color-accent);
   font-weight: 600;
   font-size: 0.95rem;
   text-decoration: none;
 }
 .toc a:hover {
-  color: #d84315;
+  color: var(--color-hover);
   text-decoration: underline;
 }
 
