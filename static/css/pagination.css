@@ -20,9 +20,8 @@
 
 /* ボタンの入れ物（リストアイテム） */
 .pagination li {
-    /* ▼ 修正：幅と高さを固定して正方形に近づける */
     width: 42px;
-    height: 42px;
+    height: 50px;
     /* float: left; は不要なので削除 */
 }
 
@@ -37,40 +36,40 @@
     height: 100%;
     padding: 0;
     
-    /* デザイン設定（!importantで確実に適用） */
-    color: #5d4037 !important; /* 文字：茶色 */
-    background-color: #ffffff !important;
-    border: 1px solid #e0e0e0 !important; /* 薄い枠線 */
-    border-radius: 8px !important; /* 角丸 */
+    /* デザイン設定（! で確実に適用） */
+    color: #5d4037; /* 文字：茶色 */
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0; /* 薄い枠線 */
+    border-radius: 8px; /* 角丸 */
     
     /* marginは親の gap で管理するため削除 */
-    margin: 0 !important;
+    margin: 0;
     
     transition: background-color 0.3s, color 0.3s, border-color 0.3s;
-    text-decoration: none !important;
+    text-decoration: none;
 }
 
 /* アクティブ（現在のページ） */
 .pagination > .active > a {
-    background-color: #547c94 !important; /* テーマのくすみブルー */
-    color: #ffffff !important;
-    border-color: #547c94 !important;
+    background-color: #547c94; /* テーマのくすみブルー */
+    color: #ffffff;
+    border-color: #547c94;
     pointer-events: none; /* クリック不可に */
 }
 
 /* ホバー時 */
 .pagination > li > a:hover {
-    background-color: #d84315 !important; /* アクセントの赤茶 */
-    color: #ffffff !important;
-    border-color: #d84315 !important;
+    background-color: #d84315; /* アクセントの赤茶 */
+    color: #ffffff;
+    border-color: #d84315;
     cursor: pointer;
 }
 
 /* クリックできない矢印（最初のページで「前へ」など） */
 .pagination > .not-allow > a,
 .pagination > .not-allow > a:hover {
-    color: #ccc !important;
-    background-color: #f9f9f9 !important;
-    border-color: #eee !important;
+    color: #ccc;
+    background-color: #f9f9f9;
+    border-color: #eee;
     cursor: default;
 }
