@@ -123,11 +123,15 @@ article.li:hover, .memo-item:hover, article.lism:hover {
   background-color: #f0f4f8;
   border: 1px solid #d1dbd4;
   padding: 1.5rem 2.5rem 1.5rem 2rem;
-  margin: 2rem 0;
+  margin: 0 0 3rem 3rem;
   display: block;
   width: fit-content;
   width: -moz-fit-content;
   max-width: 100%;
+}
+
+.toc li {
+  margin: 0rem 0rem 0.3rem 0rem;
 }
 
 .toc nav > ul {
@@ -140,6 +144,10 @@ article.li:hover, .memo-item:hover, article.lism:hover {
 .toc ul ul {
   padding-left: 1.5rem;
   margin-top: 0.5rem;
+}
+
+.toc ul ul > li {
+  margin: .2rem 0;
 }
 
 .toc a {
