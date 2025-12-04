@@ -27,26 +27,19 @@
 
 /* 実際のボタン（リンク） */
 .pagination > li > a {
-    /* ▼ 修正：文字を上下左右のど真ん中に配置 */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    
+    display: inline-block;
     width: 100%;
-    height: 100%;
     padding: 0;
+    text-align: center;
     
-    /* デザイン設定（! で確実に適用） */
-    color: #5d4037; /* 文字：茶色 */
+    color: #5d4037;
     background-color: #ffffff;
-    border: 1px solid #e0e0e0; /* 薄い枠線 */
-    border-radius: 8px; /* 角丸 */
+    border: none; 
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     
-    /* marginは親の gap で管理するため削除 */
-    margin: 0;
-    
-    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
-    text-decoration: none;
+    margin: 0 4px;
+    border-radius: 8px;
+    transition: all 0.3s ease; /* 動きを滑らかに */
 }
 
 /* アクティブ（現在のページ） */
@@ -59,10 +52,10 @@
 
 /* ホバー時 */
 .pagination > li > a:hover {
-    background-color: #d84315; /* アクセントの赤茶 */
+    background-color: #d84315;
     color: #ffffff;
-    border-color: #d84315;
-    cursor: pointer;
+    transform: translateY(-2px); /* 少し浮く */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
 /* クリックできない矢印（最初のページで「前へ」など） */
