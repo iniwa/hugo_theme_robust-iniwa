@@ -7,7 +7,7 @@
  */
 
 // Workerのエンドポイント
-const WORKER_URL = "https://memos-worker-iniwach.iniwaiwana.workers.dev/";
+const WORKER_URL = "https://cf-worker-memos.example.workers.dev/";
 
 /**
  * Memosデータを取得してコンテナに挿入する非同期関数
