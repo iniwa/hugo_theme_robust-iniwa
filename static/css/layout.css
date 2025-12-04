@@ -153,11 +153,6 @@ article.li:hover, .memo-item:hover, article.lism:hover {
   text-decoration: underline;
 }
 
-/* 旧スタイルの打ち消し 
-.toc { padding: 0 !important; background: none !important; }
-.toc nav > ul { background: none !important; padding: 0 !important; } */
-
-
 /* ==========================================================================
   グリッドシステム & Stickyサイドバー
    ========================================================================== */
