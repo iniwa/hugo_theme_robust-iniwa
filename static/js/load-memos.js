@@ -7,8 +7,8 @@ async function loadMemosForContainer(container, workerUrl) {
   // ローディング表示
   container.innerHTML = '<p style="text-align:center; color:#888;">読み込み中...</p>';
 
-  // コンテナから data-limit 属性を取得 (なければデフォルト10件)
-  const limit = container.dataset.limit || "10";
+  // コンテナから data-limit 属性を取得 (なければデフォルト50件)
+  const limit = container.dataset.limit || "50";
   
   // Workerに渡すURLを構築
   const fetchUrl = `${workerUrl}?limit=${encodeURIComponent(limit)}`;
