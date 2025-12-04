@@ -120,43 +120,46 @@ article.li:hover, .memo-item:hover, article.lism:hover {
   目次ボックス (.toc) - ※記事内リストではなく「箱」のデザイン
    ========================================================================== */
 .toc {
-  background-color: #f0f4f8 !important; 
-  border: 1px solid #d1dbd4 !important; 
-  padding: 1.5rem 2.5rem 1.5rem 2rem !important; 
-  margin: 2rem 0 !important; 
-  display: block !important;
-  width: fit-content !important; 
-  width: -moz-fit-content !important;
-  max-width: 100% !important;
+  background-color: #f0f4f8;
+  border: 1px solid #d1dbd4;
+  padding: 1.5rem 2.5rem 1.5rem 2rem;
+  margin: 0 0 3rem 3rem;
+  display: block;
+  width: fit-content;
+  width: -moz-fit-content;
+  max-width: 100%;
+}
+
+.toc li {
+  margin: 0rem 0rem 0.3rem 0rem;
 }
 
 .toc nav > ul {
-  list-style: none !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  background: none !important;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  background: none;
 }
 
 .toc ul ul {
-  padding-left: 1.5rem !important;
-  margin-top: 0.5rem !important;
+  padding-left: 1.5rem;
+  margin-top: 0.5rem;
+}
+
+.toc ul ul > li {
+  margin: .2rem 0;
 }
 
 .toc a {
-  color: #547c94 !important;
-  font-weight: 600 !important;
-  font-size: 0.95rem !important;
-  text-decoration: none !important;
+  color: #547c94;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
 }
 .toc a:hover {
-  color: #d84315 !important;
-  text-decoration: underline !important;
+  color: #d84315;
+  text-decoration: underline;
 }
-
-/* 旧スタイルの打ち消し */
-.toc { padding: 0 !important; background: none !important; }
-.toc nav > ul { background: none !important; padding: 0 !important; }
-
 
 /* ==========================================================================
   グリッドシステム & Stickyサイドバー
@@ -176,15 +179,15 @@ article.li:hover, .memo-item:hover, article.lism:hover {
     float: none;
   }
   .c8 {
-    width: 66.66666667%;
-    flex: 0 0 66.66666667%;
-    max-width: 66.66666667%;
+    width: 70%;
+    flex: 0 0 70%;
+    max-width: 70%;
     float: none;
   }
   .c4 {
-    width: 33.33333333%;
-    flex: 0 0 33.33333333%;
-    max-width: 33.33333333%;
+    width: 30%;
+    flex: 0 0 30%;
+    max-width: 30%;
     float: none;
   }
   
