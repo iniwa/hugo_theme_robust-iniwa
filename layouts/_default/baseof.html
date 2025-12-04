@@ -40,6 +40,43 @@
 {{ with .Site.Params.fontfamily }} body { font-family: {{ . | safeCSS }}; } {{ end }}
 {{ with .Site.Params.logofontfamily }} .h-logo { font-family: {{ . | safeCSS }}; } {{ end }}
     </style>
+    <!--色の変数指定-->
+    <style>
+      :root {
+        /* デフォルト（共通設定） */
+        --color-bg: #fdfcf8;
+        --color-text: #5d4037;
+        --radius-base: 12px;
+        --shadow-base: 0 4px 12px rgba(84, 124, 148, 0.1);
+      }
+
+      /* パターンA：いにわの庭 (Garden) - 暖色・茶色ベース */
+      {{ if eq .Site.Params.theme_variant "garden" }}
+      :root {
+        --color-accent: #547c94; /* くすみブルー */
+        --color-hover: #d84315;  /* テラコッタ */
+        --color-btn-bg: #9ab4c2; /* 薄い青 */
+        --color-header-border: #b0c4de;
+      }
+      {{ end }}
+
+      /* パターンB：いにわの欠け耳 (Tech) - 寒色・クールベース */
+      {{ if eq .Site.Params.theme_variant "tech" }}
+      :root {
+        /* 全体的にクールな色味に変更 */
+        --color-bg: #f5f8fa;     /* 少し青みがかった白 */
+        --color-text: #37474f;   /* 青みがかったグレー黒 */
+        --color-accent: #00bcd4; /* シアン（発光感） */
+        --color-hover: #0288d1;  /* 濃い青 */
+        --color-btn-bg: #607d8b; /* ブルーグレー */
+        --color-header-border: #4dd0e1;
+        
+        --radius-base: 4px;      /* 角丸を小さくしてシャープに */
+      }
+      {{ end }}
+    </style>
+
+    <link rel="stylesheet" href="/css/layout.css">
     <!-- cssの読み込み順序変更、変更の細分化 -->
     <link rel="stylesheet" href="/css/layout.css"> 
     <link rel="stylesheet" href="/css/content.css">
