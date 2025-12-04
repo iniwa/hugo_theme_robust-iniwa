@@ -12,7 +12,7 @@ archive = "archives"
 ```
 を追加してください。  
 
-私のサイト、[いにわの庭](https://diary.iniwach.com)」でこのテーマを実際に使用しています。  
+私のサイト、「[いにわの庭](https://diary.iniwach.com)」でこのテーマを実際に使用しています。  
 <details>
 <summary><strong>`いにわの庭`との相違点</strong></summary>
 以下は`いにわの庭`にのみ実装している要素です。  
