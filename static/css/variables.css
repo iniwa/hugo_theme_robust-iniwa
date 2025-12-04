@@ -1,0 +1,43 @@
+/* ==========================================================================
+   テーマカラー定義 (CSS変数)
+   ========================================================================== */
+
+/* 1. 共通の基本設定 (デフォルト) */
+:root {
+  --color-bg: #fdfcf8;
+  --color-text: #5d4037;
+  --radius-base: 12px;
+  --shadow-base: 0 4px 12px rgba(84, 124, 148, 0.1);
+  
+  /* デフォルト値（万が一設定が漏れたとき用） */
+  --color-accent: #547c94;
+  --color-hover: #d84315;
+  --color-btn-bg: #9ab4c2;
+  --color-header-border: #b0c4de;
+}
+
+/* 2. いにわの庭 (Garden) - 暖色・茶色ベース */
+[data-theme="garden"] {
+  --color-bg: #fdfcf8;
+  --color-text: #5d4037;
+  --color-accent: #547c94; /* くすみブルー */
+  --color-hover: #d84315;  /* テラコッタ */
+  --color-btn-bg: #9ab4c2; /* 薄い青 */
+  --color-header-border: #b0c4de;
+  
+  --radius-base: 12px;
+  --shadow-base: 0 4px 12px rgba(84, 124, 148, 0.1);
+}
+
+/* 3. いにわの欠け耳 (Tech) - 寒色・クールベース */
+[data-theme="tech"] {
+  --color-bg: #f5f8fa;     /* 少し青みがかった白 */
+  --color-text: #37474f;   /* 青みがかったグレー黒 */
+  --color-accent: #00bcd4; /* シアン（発光感） */
+  --color-hover: #0288d1;  /* 濃い青 */
+  --color-btn-bg: #607d8b; /* ブルーグレー */
+  --color-header-border: #4dd0e1;
+  
+  --radius-base: 4px;      /* 角丸を小さくしてシャープに */
+  --shadow-base: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
