@@ -42,7 +42,7 @@ article.sn > .article-body h4 {
 /* 段落・リスト */
 article.sn > .article-body ul, 
 article.sn > .article-body ol {
-    margin: 0.5rem 0 0.5rem;
+    margin: 0 0 0;
     color: #5d4037;
 }
 

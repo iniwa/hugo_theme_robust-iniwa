@@ -179,15 +179,15 @@ article.li:hover, .memo-item:hover, article.lism:hover {
     float: none;
   }
   .c8 {
-    width: 66.66666667%;
-    flex: 0 0 66.66666667%;
-    max-width: 66.66666667%;
+    width: 70%;
+    flex: 0 0 70%;
+    max-width: 70%;
     float: none;
   }
   .c4 {
-    width: 33.33333333%;
-    flex: 0 0 33.33333333%;
-    max-width: 33.33333333%;
+    width: 30%;
+    flex: 0 0 30%;
+    max-width: 30%;
     float: none;
   }
   
