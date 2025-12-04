@@ -14,19 +14,57 @@ archive = "archives"
 私のサイト、[いにわの庭](https://diary.iniwach.com)」でこのテーマを実際に使用しています。  
 
 ## 変更点
- - 全体的なデザインの変更
- - マウスホバーの実装
- - archivesの追加（taxonomies）
- - ポップアップ型の注釈追加
- - 更新日付の表示
- - シェアボタンの削減
- - OGPの大幅改善
- - cssファイルの棲み分け
- - ページネーションの実装
+ - htmlファイルによるデザインの変更
+   - シェアボタンの削減
+   - 更新日付の表示
+   - archivesの追加（taxonomies）
+ - cssファイルの棲み分け･編集
+   - マウスホバーの実装
+   - その他cssによるデザイン変更
  - shortcodeの実装
    - アコーディオンの実装
    - 画像のタイル表示
    - 注釈のポップアップ表示
+ - サイドバーが付いてくる･独立してスクロール
+ - ページネーションの実装
+ - OGPの改善
+
+## 各Shortcodeの使い方  
+### アコーディオン  
+```md
+{{< accordion title="ここをクリックして展開" >}}  
+ここに文章を入力  
+{{< /accordion >}}  
+```
+
+### 画像のグリッド表示  
+記事の`index.md`と同じ階層に画像ファイルを保存して使う。  
+```html
+{{< img-view
+  "sample1.JPEG"
+  "sample2.JPEG"
+  "sample3.JPEG"
+ >}}
+```
+
+### 注釈のポップアップ表示  
+```md
+ これは {{< tip "ここにポップアップで出る注釈を書きます" >}}ポップアップの対象になる文章{{< /tip >}} です。  
+```
+
+## 参考にした記事様  
+[zzzmisa's blog : HugoのテーマRobustのカスタマイズver3](https://blog.zzzmisa.com/customize_hugo_theme3/)  
+[syocky tech blog : Hugoテーマ「Robust」をカスタマイズする](https://syocky.netlify.app/blog/2019/09/21/customize-hugo-robust/)  
+[親方の徒然なる日々 : HugoでFontAwesomeを使用してみた。](https://blog.oyakata-life.net/hugo-site-use-font-awesome-icon/)  
+[gkzz.dev : アコーディオンメニューをHugoで作った](https://gkzz.dev/posts/accordion-menu-hugo/)  
+[テストウフ : Hugoのブログにページネーションを追加した](https://yoshikiito.net/blog/archives/add-pagination-to-hugo/)  
+[TelBouzu's Blog : HugoのRobustでfaviconとかAdsenseの登録とか](https://telbouzu.com/how2hugo2/)  
+[OLD SUNSET DAYS : Hugoでrobots.txtとsitemap.xmlを作る](https://hugo-de-blog.com/hugo-sitemap/)  
+[アロハル ： HUGOでmeta descriptionなどのmetaタグを最適化する方法](https://aloha-ru.com/hugo/hugo-metadata/)  
+[k-kazがHugoで遊ぶサイト : Hugoで外部サイトを新しいタブで開きたい。](https://k-kaz-git.github.io/post/hugo-alink/)  
+[五里霧中 : GridレイアウトをCSSを利用したものに変更しました](https://blog.ast.moe/blog/2023-02-27/)
+
+
 
 以下オリジナルREADME
 ---
