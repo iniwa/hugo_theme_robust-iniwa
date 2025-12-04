@@ -12,10 +12,10 @@ archive = "archives"
 
 [params]
   theme_variant = "garden"   # もしくは`tech`。色を変数で指定しています。
+  memos_url = ""  #不要な方は空欄にしておいてください。
 ```
 を追加してください。  
 色を変えたい場合は`static/css/variables.css`で良い感じにできると思います。  
-
 
 
 ## 変更点
@@ -34,6 +34,7 @@ archive = "archives"
  - サイドバーが付いてくる･独立してスクロール
  - ページネーションの実装
  - OGPの改善
+ - memosの表示
 
 ## 各Shortcodeの使い方  
 ### アコーディオン  

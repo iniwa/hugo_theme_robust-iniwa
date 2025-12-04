@@ -1,5 +1,9 @@
-<div id="memos-sidebar">
-  </div>
+{{ with .Site.Params.memos_url }}
 
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-<script src="/js/load-memos.js" defer></script>
+  <div id="memos-sidebar" data-url="{{ . }}">
+    </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="/js/load-memos.js" defer></script>
+
+{{ end }}

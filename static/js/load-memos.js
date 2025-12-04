@@ -1,27 +1,20 @@
 /**
- * Memosローダー (複数コンテナ対応版)
- * 1. ページ内の ".memos-js-container" クラスを持つ要素をすべて探す
- * 2. 各コンテナの "data-limit" 属性を読み取る
- * 3. Workerに ?limit=... を付けて、Memosデータを取得
- * 4. 取得したデータをコンテナに挿入する
- */
-
-// Workerのエンドポイント
-const WORKER_URL = "https://cf-worker-memos.example.workers.dev/";
-
-/**
  * Memosデータを取得してコンテナに挿入する非同期関数
  * @param {HTMLElement} container - 挿入先のDOM要素
+ * @param {string} workerUrl - データ取得先のWorker URL
  */
-async function loadMemosForContainer(container) {
+async function loadMemosForContainer(container, workerUrl) {
+  // ローディング表示
+  container.innerHTML = '<p style="text-align:center; color:#888;">読み込み中...</p>';
+
   // コンテナから data-limit 属性を取得 (なければデフォルト10件)
   const limit = container.dataset.limit || "10";
   
-  // Workerに渡すURLを構築 (例: .../?limit=5)
-  const fetchUrl = `${WORKER_URL}?limit=${encodeURIComponent(limit)}`;
+  // Workerに渡すURLを構築
+  const fetchUrl = `${workerUrl}?limit=${encodeURIComponent(limit)}`;
 
   try {
-    // 3. WorkersからMemosのデータを取得
+    // 1. WorkersからMemosのデータを取得
     const response = await fetch(fetchUrl); 
     if (!response.ok) {
       throw new Error(`データの取得に失敗しました: ${response.status}`);
@@ -33,24 +26,27 @@ async function loadMemosForContainer(container) {
        throw new Error(memos.error);
     }
 
-    // 4. データをHTMLに変換して流し込む
+    // 2. データをHTMLに変換して流し込む
     if (memos && memos.length > 0) {
-      container.innerHTML = ""; // 「読み込み中...」を消去
+      container.innerHTML = ""; // ローディング表示を消去
       
+      // marked.js の存在確認
       if (typeof window.marked === 'undefined') {
         console.error("marked.js が読み込まれていません。");
-        throw new Error("Markdownパーサーがありません。");
+        container.innerHTML = "<p>Markdownパーサーが見つかりません。</p>";
+        return;
       }
       
       memos.forEach(memo => {
         // --- スタイル用の外枠 ---
         const memoElement = document.createElement("div");
-        memoElement.className = "memo-item"; // (memos-style.css で定義したスタイル)
+        memoElement.className = "memo-item"; // memos-style.css のクラス
 
         // --- 本文 (Markdown) をレンダリング ---
         if (memo.content) {
           const contentDiv = document.createElement("div");
           contentDiv.className = "memo-content";
+          // marked.parse を使用してHTMLに変換
           contentDiv.innerHTML = window.marked.parse(memo.content); 
           memoElement.appendChild(contentDiv);
         }
@@ -61,16 +57,21 @@ async function loadMemosForContainer(container) {
           resourcesDiv.className = "memo-resources";
 
           memo.resources.forEach(resource => {
+            // 画像タイプのみ処理
             if (resource.type && resource.type.startsWith("image/")) {
               const img = document.createElement("img");
               
-              // 画像パスを構築 (例: "resources/c3Nn.../PXL...jpg")
+              // 画像パスを構築 (Memos v1 APIの構造に準拠)
+              // 例: resources/xxxx.../filename.jpg
               const imagePath = `${resource.name}/${resource.filename}`;
               
-              // Workerに ?image_path=... を付けて画像リクエスト（プロキシ）
-              img.src = `${WORKER_URL}?image_path=${encodeURIComponent(imagePath)}`;
+              // Workerに ?image_path=... を付けて画像リクエスト（プロキシ経由）
+              img.src = `${workerUrl}?image_path=${encodeURIComponent(imagePath)}`;
               
-              img.alt = resource.filename;
+              img.alt = resource.filename || "image";
+              img.loading = "lazy"; // 遅延読み込み
+              
+              // スタイル (CSSファイル側でも調整可能ですが、念のため)
               img.style.maxWidth = "100%"; 
               img.style.borderRadius = "8px";
               img.style.marginTop = "8px";
@@ -84,9 +85,17 @@ async function loadMemosForContainer(container) {
         // --- 日付 ---
         const dateElement = document.createElement("small");
         dateElement.className = "memo-date";
-        dateElement.innerText = new Date(memo.createdAt).toLocaleString('ja-JP');
+        // 日付フォーマットの調整 (例: 2025/12/01 12:34)
+        dateElement.innerText = new Date(memo.createdAt).toLocaleString('ja-JP', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
         memoElement.appendChild(dateElement);
 
+        // コンテナに追加
         container.appendChild(memoElement);
       });
     } else {
@@ -96,21 +105,24 @@ async function loadMemosForContainer(container) {
 
   } catch (error) {
     // エラーが発生した場合
-    console.error("Memosの読み込みエラー:", error.message, container);
-    container.innerHTML = "<p>Memosの読み込みに失敗しました。</p>";
+    console.error("Memosの読み込みエラー:", error);
+    container.innerHTML = `<p style="color:#d84315;">読み込みに失敗しました。<br><small>${error.message}</small></p>`;
   }
 }
 
 // --------------------------------------------------
 // メイン実行部
 // --------------------------------------------------
-// HTMLドキュメントが読み込まれたら、すべてのコンテナを探して実行
-document.addEventListener("DOMContentLoaded", () => {
-  const containers = document.querySelectorAll(".memos-js-container");
+document.addEventListener('DOMContentLoaded', () => {
+  // HTML側 (memos.html) で指定したIDを取得
+  const container = document.getElementById('memos-sidebar');
   
-  if (containers.length > 0) {
-    containers.forEach(container => {
-      loadMemosForContainer(container);
-    });
-  }
+  // コンテナが存在しない、またはURL設定がない場合は何もしない
+  if (!container || !container.dataset.url) return;
+
+  // HTMLの data-url 属性からURLを取得
+  const MEMOS_URL = container.dataset.url; 
+
+  // 読み込み関数を実行
+  loadMemosForContainer(container, MEMOS_URL);
 });
