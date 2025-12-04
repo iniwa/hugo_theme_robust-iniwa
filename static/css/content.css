@@ -21,12 +21,12 @@ article.sn > .article-body h2 {
     padding-bottom: 0.3rem;
 }
 
-/* 見出し (H3) - 青い左線 */
+/* 見出し (H3) */
 article.sn > .article-body h3 {
     font-weight: 700;
     font-size: 1.3rem;
     color: #5d4037;
-    border-left: 6px solid #547c94;
+    border-left: 6px solid #5d4037;
     margin-top: 2.5rem;
     margin-bottom: 1rem;
     padding-left: 0.8rem;
@@ -34,8 +34,8 @@ article.sn > .article-body h3 {
 
 /* 見出し (H4) */
 article.sn > .article-body h4 {
-    margin-top: 1.5rem;
-    margin-bottom: 0.0rem;
+    margin-top: 0.4rem;
+    margin-bottom: 1rem;
     color: #5d4037;
 }
 
@@ -43,11 +43,11 @@ article.sn > .article-body h4 {
 article.sn > .article-body p,
 article.sn > .article-body ul, 
 article.sn > .article-body ol {
-    margin: 1.3rem 0;
+    margin: 0.6rem 0 0.7rem;
     color: #5d4037;
 }
 article.sn > .article-body li {
-    padding-bottom: 0.25rem;
+    padding-bottom: 0.4rem;
     line-height: 1.5rem;
 }
 
@@ -56,6 +56,11 @@ article.sn > .article-body strong {
     font-weight: 700;
     background: linear-gradient(transparent 60%, #b0c4de 60%);
     box-shadow: none;
+}
+
+/* 太字 */
+article.sn > .article-body em {
+    color: #333;
 }
 
 /* コードブロック */
