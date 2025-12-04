@@ -40,14 +40,20 @@ article.sn > .article-body h4 {
 }
 
 /* 段落・リスト */
-article.sn > .article-body p,
 article.sn > .article-body ul, 
 article.sn > .article-body ol {
-    margin: 0.6rem 0 0.7rem;
+    margin: 0.5rem 0 0.5rem;
     color: #5d4037;
 }
+
+article.sn > .article-body p {
+    margin: 0.5rem 0 0.5rem;
+    color: #5d4037;
+    line-height: 1.55rem;
+}
+
 article.sn > .article-body li {
-    padding-bottom: 0.4rem;
+    padding: 0rem 0.2rem 0.5rem 0rem;
     line-height: 1.5rem;
 }
 
