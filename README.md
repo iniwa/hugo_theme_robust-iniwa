@@ -38,6 +38,7 @@ archive = "archives"
  - ページネーションの実装
  - OGPの改善
  - memosの表示
+ - 外部サイトのURLを新しいタブで表示
 
 ## 各Shortcodeの使い方  
 ### アコーディオン  

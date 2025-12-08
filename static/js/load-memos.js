@@ -1,3 +1,5 @@
+/* 追加ファイル */
+
 /**
  * Memosデータを取得してコンテナに挿入する非同期関数
  * @param {HTMLElement} container - 挿入先のDOM要素
