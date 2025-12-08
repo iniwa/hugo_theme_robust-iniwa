@@ -1,3 +1,5 @@
+/* 画像のグリッド表示 */
+
 .img-view{
     display: grid;
     grid-auto-rows: auto;
