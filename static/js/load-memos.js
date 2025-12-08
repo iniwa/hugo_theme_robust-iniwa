@@ -17,7 +17,16 @@ async function loadMemosForContainer(container, workerUrl) {
 
   try {
     // 1. WorkersからMemosのデータを取得
-    const response = await fetch(fetchUrl); 
+    // 現在のページのURLを取得
+    const currentUrl = window.location.href;
+
+    const response = await fetch(fetchUrl, {
+      method: "GET",
+      // 👇 ここに特製ヘッダーを追加！
+      headers: {
+        "X-Source-Url": currentUrl
+      }
+    });
     if (!response.ok) {
       throw new Error(`データの取得に失敗しました: ${response.status}`);
     }
