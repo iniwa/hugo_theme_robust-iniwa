@@ -4,17 +4,83 @@
 
 変更した箇所にはコメントアウトを入れてるつもりですが、抜けがあるかもしれません。  
 
-このテーマを利用する際は、config.tomlに  
+参考に私の`config.toml`を記載します。
 ```toml
+baseURL = "https://example.com/"
+languageCode = "ja-jp"
+languageName = "Japanese"
+defaultContentLanguage = "ja"
+title = "サンプルサイト"
+theme = "robust-iniwa"
+
+hasCJKLanguage = true
+enableRobotsTXT = true 
+
 [taxonomies]
-tag = "tags"
-archive = "archives"
+  tag = "tags"
+  archive = "archives"
+
+[params.author]
+  thumbnail = "images/profile/Author.png"
+  name = "sample"
+  description = "ひとことプロフィール"
+  twitter = "https://twitter.com/sample"
+  YouTube = "https://www.youtube.com/@sample"
+  Twitch = "https://www.twitch.tv/sample"
+  mail = "https://docs.google.com/forms/samplae"
 
 [params]
-  theme_variant = "garden"   # もしくは`tech`。色を変数で指定しています。
-  memos_url = ""  #不要な方は空欄にしておいてください。
+  description = "ひとことプロフィール"
+  dateformat = "2006/01/02"
+  # Fonts settings.
+  googlefonts = "https://fonts.googleapis.com/css?family=Lobster|Lato:400,700" 
+  fontfamily = "Lato,YuGothic,'Hiragino Kaku Gothic Pro',Meiryo,sans-serif" 
+  logofontfamily = "Lobster, cursive" 
+  favicon = "images/favicon.ico"
+  theme_variant = "garden" # 庭モード
+  memos_url = ""
+
+[outputs]
+  home = [ "HTML", "RSS" ]
+  page = [ "HTML" ]
+
+[services]
+  [services.disqus]
+    shortname = 'disqus-ID'
+  [services.googleAnalytics]
+    id = 'G-ID'
+
+[markup]
+  [markup.highlight]
+    anchorLineNos = false
+    codeFences = true
+    guessSyntax = false
+    hl_Lines = ''
+    hl_inline = false
+    lineAnchors = ''
+    lineNoStart = 1
+    lineNos = false
+    lineNumbersInTable = true
+    noClasses = true
+    style = 'monokai'
+    tabWidth = 4
+    wrapperClass = 'highlight'
+  
+  [markup.goldmark]
+    [markup.goldmark.extensions]
+      definitionList = true
+      footnote = true
+      linkify = true
+      strikethrough = true
+      table = true
+      taskList = true
+      typographer = true
+    
+    # 【追記】これを追加しないとYoutube埋め込み等が消えます
+    [markup.goldmark.renderer]
+      unsafe = true
 ```
-を追加してください。  
+良い感じに編集してください。  
 色を変えたい場合は`static/css/variables.css`で良い感じにできると思います。  
 
 また、フッターにプライバシーポリシーと免責事項へのリンクを設置しています。  
