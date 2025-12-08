@@ -33,9 +33,9 @@ enableRobotsTXT = true
   description = "ひとことプロフィール"
   dateformat = "2006/01/02"
   # Fonts settings.
-  googlefonts = "https://fonts.googleapis.com/css?family=Lobster|Lato:400,700" 
-  fontfamily = "Lato,YuGothic,'Hiragino Kaku Gothic Pro',Meiryo,sans-serif" 
-  logofontfamily = "Lobster, cursive" 
+  googlefonts = "https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&family=Zen+Maru+Gothic:wght@400;700&display=swap"
+  fontfamily = "'Quicksand', 'Zen Maru Gothic', sans-serif"
+  logofontfamily = "'Quicksand', sans-serif"
   favicon = "images/favicon.ico"
   theme_variant = "garden" # 庭モード
   memos_url = ""
