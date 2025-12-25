@@ -10,7 +10,6 @@ body {
   padding-top: 70px;
   background-color: var(--color-bg); 
   color: var(--color-text); 
-  font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
 }
 
 /* リンク色 */
