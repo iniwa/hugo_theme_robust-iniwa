@@ -348,7 +348,11 @@ article.sn > .article-body {
       font-size: .9rem;
     }
   }
-  code, pre{
+  code {
+    font-family: inherit;
+    font-size: .7rem;
+  }
+  pre {
     font-family: Menlo, Consolas, monospace;
     font-size: .7rem;
   }
