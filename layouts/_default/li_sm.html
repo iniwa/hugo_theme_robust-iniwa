@@ -1,6 +1,19 @@
 <article class="lism">
   <a href="{{ .Permalink }}">
-    <div class="thumb thumb-{{ .File.UniqueID }}"></div>
+
+    {{/* ▼▼▼ 修正箇所開始：サムネイル取得ロジックを追加 ▼▼▼ */}}
+    {{ $thumb := .Params.thumbnail }}
+    {{ $thumbSrc := "" }}
+    {{ with .Resources.GetMatch $thumb }}
+      {{ $thumbSrc = .RelPermalink }}
+    {{ else }}
+      {{ with $thumb }}
+        {{ $thumbSrc = . | relURL }}
+      {{ end }}
+    {{ end }}
+
+    <div class="thumb thumb-{{ .File.UniqueID }}" {{ if $thumbSrc }}style="background-image: url('{{ $thumbSrc }}');"{{ end }}></div>
+    {{/* ▲▲▲ 修正箇所終了 ▲▲▲ */}}
 
     <div class="inner">
       <div class="title">{{ .Title }}</div>
