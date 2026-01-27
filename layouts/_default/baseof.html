@@ -57,6 +57,7 @@
       gtag('config', '{{ .Site.Config.Services.GoogleAnalytics.ID }}');
     </script>
     {{ end }}
+    {{ partial "umami.html" . }}
   </head>
   <body data-theme="{{ .Site.Params.theme_variant | default "garden" }}">
     <header class="l-header">
