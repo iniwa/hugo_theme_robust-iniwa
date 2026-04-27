@@ -1,7 +1,23 @@
-{{ define "title" }}{{ if not .IsHome }}{{ .Title }} - {{ end }}{{ end }}
+{{ define "title" }}404 Not Found - {{ end }}
 
 {{ define "main" }}
 <header class="page-header">
-  <h1>{{ .Title }}</h1>
+  <h1>404 - ページが見つかりません</h1>
 </header>
+
+<section class="not-found">
+  <p>お探しのページは移動・削除されたか、URLが間違っている可能性があります。</p>
+  <p>
+    <a href="{{ .Site.BaseURL }}">▶ トップページへ戻る</a>
+  </p>
+</section>
+
+<section class="not-found-latests">
+  <h2>最新の記事</h2>
+  <div class="articles sm">
+    {{ range first 5 .Site.RegularPages }}
+    {{ .Render "li_sm" }}
+    {{ end }}
+  </div>
+</section>
 {{ end }}
