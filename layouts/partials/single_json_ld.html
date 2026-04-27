@@ -1,3 +1,9 @@
+{{/*
+  [mod] 上流の NewsArticle ベースの JSON-LD を BlogPosting にリプレース。
+   - mainEntityOfPage の @id を BaseURL ではなく Permalink に修正
+   - description フィールドを追加（frontmatter description 優先・なければ Summary）
+   - author 名は params.author.name 優先、未設定なら Site.Title をフォールバック
+*/}}
 <script type="application/ld+json">
   {
     "@context": "https://schema.org",

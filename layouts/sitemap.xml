@@ -1,4 +1,4 @@
-<!--追加ファイル-->
+<!-- [new] /tags/ /categories/ /archives/ /_draft/ を sitemap から除外する独自テンプレート -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   {{ range .Data.Pages }}
   {{ if or (in .Permalink "/tags/") (in .Permalink "/categories/") (in .Permalink "/archives/") (in .Permalink "/_draft/")}}

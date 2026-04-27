@@ -1,4 +1,4 @@
-<!-- 追加ファイル -->
+<!-- [new] Markdown リンクのレンダリングフック。外部リンクを target="_blank" rel="noopener" で開き、アフィリエイト系ドメインには rel="sponsored" を自動付与 -->
 {{- $url := .Destination -}}
 {{- $isExternal := strings.HasPrefix $url "http" -}}
 {{- $rel := "" -}}
