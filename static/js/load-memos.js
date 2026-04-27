@@ -1,139 +1,178 @@
-/* 追加ファイル */
-
 /**
- * Memosデータを取得してコンテナに挿入する非同期関数
- * @param {HTMLElement} container - 挿入先のDOM要素
- * @param {string} workerUrl - データ取得先のWorker URL
+ * Memos プロキシ Worker から取得した投稿をサイドバーに描画する。
+ *
+ * 依存:
+ *   - window.marked       : Markdown -> HTML 変換 (memos.html で UMD ロード)
+ *   - window.DOMPurify    : marked 出力の sanitize (XSS 対策)
+ *
+ * Worker 契約 (themes/robust-iniwa の Worker と対):
+ *   - GET ?limit=N           -> JSON 配列 [{ name, content, createdAt, resources[] }]
+ *   - GET ?image_path=PATH   -> 画像バイナリ
+ *   - リクエスト時に X-Source-Url ヘッダーで現在ページの URL を送る
  */
-async function loadMemosForContainer(container, workerUrl) {
-  // ローディング表示
-  container.innerHTML = '<p style="text-align:center; color:#888;">読み込み中...</p>';
 
-  // コンテナから data-limit 属性を取得 (なければデフォルト50件)
-  const limit = container.dataset.limit || "50";
-  
-  // Workerに渡すURLを構築
-  const fetchUrl = `${workerUrl}?limit=${encodeURIComponent(limit)}`;
+(() => {
+  // ------------------------------------------------------------
+  // ユーティリティ
+  // ------------------------------------------------------------
 
-  try {
-    // 1. WorkersからMemosのデータを取得
-    // 現在のページのURLを取得
-    const currentUrl = window.location.href;
+  /**
+   * Memos の content (Markdown + Worker 側で改行を <br> 化済み) を
+   * marked -> DOMPurify の順で処理し、安全な HTML 文字列にする。
+   */
+  function renderSafeHTML(markdownLike) {
+    const rawHtml = window.marked.parse(markdownLike);
+    return window.DOMPurify.sanitize(rawHtml);
+  }
 
-    const response = await fetch(fetchUrl, {
-      method: "GET",
-      // 👇 ここに特製ヘッダーを追加！
-      headers: {
-        "X-Source-Url": currentUrl
+  /** 文字列を 1 行のメッセージとしてコンテナに描画 (textContent で XSS 防止) */
+  function renderMessage(container, text, color) {
+    container.replaceChildren();
+    const p = document.createElement("p");
+    p.style.textAlign = "center";
+    if (color) p.style.color = color;
+    p.textContent = text;
+    container.appendChild(p);
+  }
+
+  /** エラー表示 (タイトル + 詳細) を textContent で安全に描画 */
+  function renderError(container, title, detail) {
+    container.replaceChildren();
+    const p = document.createElement("p");
+    p.style.color = "#d84315";
+
+    const titleNode = document.createTextNode(title);
+    const small = document.createElement("small");
+    small.textContent = detail;
+
+    p.appendChild(titleNode);
+    p.appendChild(document.createElement("br"));
+    p.appendChild(small);
+    container.appendChild(p);
+  }
+
+  /** 必要な依存ライブラリが読み込まれているかチェック */
+  function ensureDependencies(container) {
+    if (typeof window.marked === "undefined") {
+      console.error("marked が読み込まれていません。");
+      renderMessage(container, "Markdown パーサーが見つかりません。", "#d84315");
+      return false;
+    }
+    if (typeof window.DOMPurify === "undefined") {
+      console.error("DOMPurify が読み込まれていません。");
+      renderMessage(container, "Sanitizer が見つかりません。", "#d84315");
+      return false;
+    }
+    return true;
+  }
+
+
+  // ------------------------------------------------------------
+  // 描画
+  // ------------------------------------------------------------
+
+  /** 1 件のメモを DOM 要素として組み立てる */
+  function buildMemoElement(memo, workerUrl) {
+    const item = document.createElement("div");
+    item.className = "memo-item";
+
+    // 本文 (Markdown) を sanitize して挿入
+    if (memo.content) {
+      const contentDiv = document.createElement("div");
+      contentDiv.className = "memo-content";
+      contentDiv.innerHTML = renderSafeHTML(memo.content);
+      item.appendChild(contentDiv);
+    }
+
+    // 添付画像 (Memos resources のうち image/* のみ)
+    if (Array.isArray(memo.resources) && memo.resources.length > 0) {
+      const resourcesDiv = document.createElement("div");
+      resourcesDiv.className = "memo-resources";
+
+      memo.resources.forEach((resource) => {
+        if (!resource.type || !resource.type.startsWith("image/")) return;
+
+        const img = document.createElement("img");
+        // Memos v1 API の path 形式: resources/{id}/{filename}
+        const imagePath = `${resource.name}/${resource.filename}`;
+        img.src = `${workerUrl}?image_path=${encodeURIComponent(imagePath)}`;
+        img.alt = resource.filename || "image";
+        img.loading = "lazy";
+        img.style.maxWidth = "100%";
+        img.style.borderRadius = "8px";
+        img.style.marginTop = "8px";
+        resourcesDiv.appendChild(img);
+      });
+
+      if (resourcesDiv.children.length > 0) {
+        item.appendChild(resourcesDiv);
       }
-    });
-    if (!response.ok) {
-      throw new Error(`データの取得に失敗しました: ${response.status}`);
     }
 
-    const memos = await response.json();
-    
-    if (memos.error) {
-       throw new Error(memos.error);
+    // 投稿日時 (端末ローカルの日本時間表記)
+    if (memo.createdAt) {
+      const date = document.createElement("small");
+      date.className = "memo-date";
+      date.textContent = new Date(memo.createdAt).toLocaleString("ja-JP", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+      item.appendChild(date);
     }
 
-    // 2. データをHTMLに変換して流し込む
-    if (memos && memos.length > 0) {
-      container.innerHTML = ""; // ローディング表示を消去
-      
-      // marked.js の存在確認
-      if (typeof window.marked === 'undefined') {
-        console.error("marked.js が読み込まれていません。");
-        container.innerHTML = "<p>Markdownパーサーが見つかりません。</p>";
+    return item;
+  }
+
+
+  // ------------------------------------------------------------
+  // メイン
+  // ------------------------------------------------------------
+
+  /** Worker から取得して container に描画 */
+  async function loadMemos(container, workerUrl) {
+    if (!ensureDependencies(container)) return;
+
+    renderMessage(container, "読み込み中...", "#888");
+
+    const limit = container.dataset.limit || "50";
+    const fetchUrl = `${workerUrl}?limit=${encodeURIComponent(limit)}`;
+
+    try {
+      const response = await fetch(fetchUrl, {
+        method: "GET",
+        headers: { "X-Source-Url": window.location.href },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+
+      const memos = await response.json();
+      if (memos && memos.error) {
+        throw new Error(memos.error);
+      }
+
+      if (!Array.isArray(memos) || memos.length === 0) {
+        renderMessage(container, "投稿はまだありません。");
         return;
       }
-      
-      memos.forEach(memo => {
-        // --- スタイル用の外枠 ---
-        const memoElement = document.createElement("div");
-        memoElement.className = "memo-item"; // memos-style.css のクラス
 
-        // --- 本文 (Markdown) をレンダリング ---
-        if (memo.content) {
-          const contentDiv = document.createElement("div");
-          contentDiv.className = "memo-content";
-          // marked.parse を使用してHTMLに変換
-          contentDiv.innerHTML = window.marked.parse(memo.content); 
-          memoElement.appendChild(contentDiv);
-        }
-
-        // --- 画像 (resources) をレンダリング ---
-        if (memo.resources && memo.resources.length > 0) {
-          const resourcesDiv = document.createElement("div");
-          resourcesDiv.className = "memo-resources";
-
-          memo.resources.forEach(resource => {
-            // 画像タイプのみ処理
-            if (resource.type && resource.type.startsWith("image/")) {
-              const img = document.createElement("img");
-              
-              // 画像パスを構築 (Memos v1 APIの構造に準拠)
-              // 例: resources/xxxx.../filename.jpg
-              const imagePath = `${resource.name}/${resource.filename}`;
-              
-              // Workerに ?image_path=... を付けて画像リクエスト（プロキシ経由）
-              img.src = `${workerUrl}?image_path=${encodeURIComponent(imagePath)}`;
-              
-              img.alt = resource.filename || "image";
-              img.loading = "lazy"; // 遅延読み込み
-              
-              // スタイル (CSSファイル側でも調整可能ですが、念のため)
-              img.style.maxWidth = "100%"; 
-              img.style.borderRadius = "8px";
-              img.style.marginTop = "8px";
-              
-              resourcesDiv.appendChild(img);
-            }
-          });
-          memoElement.appendChild(resourcesDiv);
-        }
-
-        // --- 日付 ---
-        const dateElement = document.createElement("small");
-        dateElement.className = "memo-date";
-        // 日付フォーマットの調整 (例: 2025/12/01 12:34)
-        dateElement.innerText = new Date(memo.createdAt).toLocaleString('ja-JP', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-        memoElement.appendChild(dateElement);
-
-        // コンテナに追加
-        container.appendChild(memoElement);
-      });
-    } else {
-      // メモが0件の場合
-      container.innerHTML = "<p>投稿はまだありません。</p>";
+      container.replaceChildren();
+      memos.forEach((memo) => container.appendChild(buildMemoElement(memo, workerUrl)));
+    } catch (error) {
+      console.error("Memos の読み込みエラー:", error);
+      renderError(container, "読み込みに失敗しました。", error.message);
     }
-
-  } catch (error) {
-    // エラーが発生した場合
-    console.error("Memosの読み込みエラー:", error);
-    container.innerHTML = `<p style="color:#d84315;">読み込みに失敗しました。<br><small>${error.message}</small></p>`;
   }
-}
 
-// --------------------------------------------------
-// メイン実行部
-// --------------------------------------------------
-document.addEventListener('DOMContentLoaded', () => {
-  // HTML側 (memos.html) で指定したIDを取得
-  const container = document.getElementById('memos-sidebar');
-  
-  // コンテナが存在しない、またはURL設定がない場合は何もしない
-  if (!container || !container.dataset.url) return;
 
-  // HTMLの data-url 属性からURLを取得
-  const MEMOS_URL = container.dataset.url; 
-
-  // 読み込み関数を実行
-  loadMemosForContainer(container, MEMOS_URL);
-});
+  // エントリポイント
+  document.addEventListener("DOMContentLoaded", () => {
+    const container = document.getElementById("memos-sidebar");
+    if (!container || !container.dataset.url) return;
+    loadMemos(container, container.dataset.url);
+  });
+})();

@@ -37,7 +37,7 @@ enableRobotsTXT = false  # 自前の static/robots.txt を使う場合は false
 [params.author]
   thumbnail      = "images/profile/Author.png"
   name           = "sample"
-  description    = "ひとことプロフィール"
+  description    = "ひとことプロフィール"   # ⚠ HTML としてそのまま展開されます (上流仕様)。信頼できる文字列のみ書くこと。<p>...</p> 等のタグも使えます
   twitter        = "https://twitter.com/sample"
   twitter_handle = "@sample"
   YouTube        = "https://www.youtube.com/@sample"
