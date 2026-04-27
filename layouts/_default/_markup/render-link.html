@@ -1,6 +1,17 @@
 <!-- 追加ファイル -->
-<a href="{{ .Destination | safeURL }}"
-   {{ with .Title}} title="{{ . }}"{{ end }}
-   {{ if strings.HasPrefix .Destination "http" }} target="_blank" rel="noopener"{{ end }}>
-   {{ .Text }}
-</a>
+{{- $url := .Destination -}}
+{{- $isExternal := strings.HasPrefix $url "http" -}}
+{{- $rel := "" -}}
+{{- $target := "" -}}
+{{- if $isExternal -}}
+  {{- $target = "_blank" -}}
+  {{- $rel = "noopener" -}}
+  {{/* アフィリエイト系ドメインには sponsored を付与（Google ガイドライン準拠） */}}
+  {{- $sponsoredDomains := slice "amzn.to" "amazon.co.jp" "amazon.com" "a.r10.to" "rakuten.co.jp" "afl.rakuten" "e-earphone.jp" "valuecommerce" "a8.net" "linksynergy" -}}
+  {{- range $sponsoredDomains -}}
+    {{- if in $url . -}}
+      {{- $rel = "sponsored noopener" -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+<a href="{{ $url | safeURL }}"{{ with .Title }} title="{{ . }}"{{ end }}{{ with $rel }} rel="{{ . }}"{{ end }}{{ with $target }} target="{{ . }}"{{ end }}>{{ .Text | safeHTML }}</a>
