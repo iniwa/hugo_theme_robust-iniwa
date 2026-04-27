@@ -8,6 +8,13 @@
 {{ with .Site.Params.contact }}<meta name="contact" content="{{ . }}">{{ end }}
 {{ hugo.Generator }}
 
+{{/* Google AdSense: adsense_client_id が設定されていて本番ビルド時のみ出力 */}}
+{{ with .Site.Params.adsense_client_id }}
+  {{ if hugo.IsProduction }}
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{ . }}" crossorigin="anonymous"></script>
+  {{ end }}
+{{ end }}
+
 <link rel="apple-touch-icon" href="{{ .Site.BaseURL }}images/logo.png">
 
 {{ range .AlternativeOutputFormats }}
