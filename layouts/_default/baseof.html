@@ -10,10 +10,6 @@
     {{ else }}
     <link href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,700" rel="stylesheet">
     {{ end }}
-    {{ if .Site.Params.EnableHighlight | default false }}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.0/styles/default.min.css">
-    {{ end }}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous">
     <style>
 {{ with resources.Get "styles.scss" | toCSS }}
   {{ replace .Content `@charset "UTF-8";` "" | safeCSS }}
@@ -29,13 +25,6 @@
   background-size: cover;
   background-position: center;
 }
-{{ range $p := .Site.RegularPages }}
-  {{ with $p.Params.thumbnail }}
-.thumb-{{ $p.File.UniqueID }} {
-  background-image: url("{{ . | absURL }}");
-}
-  {{ end }}
-{{ end }}
 
 {{ with .Site.Params.fontfamily }} body { font-family: {{ . | safeCSS }}; } {{ end }}
 {{ with .Site.Params.logofontfamily }} .h-logo { font-family: {{ . | safeCSS }}; } {{ end }}
@@ -93,7 +82,7 @@
 
     <footer class="l-footer">
       <div class="l-container">
-        <p>{{ with .Site.Copyright }}{{ . | safeHTML }}{{ else }}<span class="h-logo">&copy; {{ .Site.Title }}</span>{{ end }}</p>
+        <p><span class="h-logo">&copy; {{ .Site.Title }}</span></p>
         <aside>
           <p><a href="/notice">Notice</a> | <a href="/privacy">Privacy Policy</a></p>
           <!-- フッターにnoticeとprivacyを表示するように。ページを用意しないとなのでコメントアウトで無効化 -->
@@ -103,11 +92,6 @@
       </div>
     </footer>
 
-    {{ if .Site.Params.EnableHighlight | default false }}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.0/highlight.min.js" crossorigin="anonymous"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
-    {{ end }}
-    
     <script>
     (function() {
       const header = document.querySelector('.l-header');
