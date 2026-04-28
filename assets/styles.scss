@@ -359,28 +359,19 @@ article.sn > .article-body {
 }
 
 article.sn > .article-body pre {
-  background-color: #333;
-  color: #fff;
+  background-color: #2b2b2b;
+  color: #f5f5f5;
   line-height: 1rem;
-  margin: 1.5rem -2rem;
+  margin: 1.5rem 0;
   overflow: auto;
-}
-
-@media (max-width: 768px) {
-  article.sn > .article-body pre {
-    margin: 1.5rem -1rem;
-  }
+  border-radius: var(--radius-base);
+  border: 1px solid #1a1a1a;
+  box-shadow: var(--shadow-base);
 }
 
 article.sn > .article-body pre > code {
   display: block;
-  padding: 1rem 2rem;
-}
-
-@media (max-width: 768px) {
-  article.sn > .article-body pre > code {
-    padding: 1rem;
-  }
+  padding: 1rem 1.25rem;
 }
 
 article.sn > .article-body {
