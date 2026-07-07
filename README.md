@@ -97,7 +97,6 @@ enableRobotsTXT = false  # 自前の static/robots.txt を使う場合は false
 | 種別 | ファイル | 内容 |
 |:---|:---|:---|
 | `[mod]` | `layouts/_default/baseof.html` | サイドバー構成を全面差替（archives / categories / latests / memos）、`data-theme` 属性、Cloudflare Pages 等の自前 CSS 分割（variables/layout/content/pagination/grid/tip/memos）、スクロール連動ヘッダー JS、Umami 連携、フッターに Notice/Privacy リンク追加。highlight.js / `custom.css` / `Site.Copyright` 周りのデッドコードを削除 |
-| `[mod]` | `layouts/_default/baseof.amp.html` | FontAwesome を上流 v5.13.0 → v6.5.1 に更新 |
 | `[mod]` | `layouts/_default/list.html` | 内部 `_internal/pagination.html` への切替、Page Bundles 対応のサムネイル取得ロジック追加、Lastmod 表示追加、c6 グリッド化 |
 | `[mod]` | `layouts/_default/summary.html` | サムネイルの Page Resources 解決を追加、シェアボタンを記事下部のみに整理 |
 | `[mod]` | `layouts/_default/li_sm.html` | サムネイルの Page Resources 解決を追加 |
@@ -117,6 +116,7 @@ enableRobotsTXT = false  # 自前の static/robots.txt を使う場合は false
 | `[new]` | `layouts/shortcodes/tip.html` | ホバーで注釈を出すツールチップ |
 | `[new]` | `layouts/sitemap.xml` | `/tags/` `/categories/` `/archives/` `/_draft/` を sitemap から除外 |
 | `[removed]` | `layouts/partials/custom.css` | `static/css/*.css` に分離したため削除 |
+| `[removed]` | `layouts/_default/baseof.amp.html` / `layouts/_default/single.amp.html` / `layouts/shortcodes/img.amp.html` | 親サイトで AMP 出力を行っていないため削除 |
 
 ### CSS / アセット
 
@@ -220,7 +220,6 @@ This is the grid based theme for Hugo.
 
 # Features
 
-* [Accelerated Mobile Pages Project](https://www.ampproject.org/) a.k.a AMP supported
 * Responsive design
 * Google Analytics
 * Thumbnail
