@@ -246,12 +246,12 @@ $ git clone https://github.com/dim0627/hugo_theme_robust.git
 Supported development mode.
 
 ```
-env HUGO_ENV="DEV" hugo server --watch --buildDrafts=true --buildFuture=true -t robust
+hugo server --environment development --watch --buildDrafts --buildFuture
 ```
 
-This mode is
+Development builds are
 
 * Not show Google Analytics tags.
 * Show `WordCount`.
 
-And set `{{ if ne (getenv "HUGO_ENV") "DEV" }} Set elements here. {{ end }}` if you want to place only in a production environment.
+Use `{{ if hugo.IsProduction }} ... {{ end }}` for production-only template output.

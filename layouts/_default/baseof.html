@@ -46,7 +46,7 @@
     <link rel="stylesheet" href="/css/grid.css">
     <link rel="stylesheet" href="/css/tip.css">
     <link rel="stylesheet" href="/css/memos-style.css">
-    {{ if and .Site.Config.Services.GoogleAnalytics.ID (ne (getenv "HUGO_ENV") "DEV") }}
+    {{ if and .Site.Config.Services.GoogleAnalytics.ID hugo.IsProduction }}
     <script async src="https://www.googletagmanager.com/gtag/js?id={{ .Site.Config.Services.GoogleAnalytics.ID }}"></script>
     <script>
       window.dataLayer = window.dataLayer || [];

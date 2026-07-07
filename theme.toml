@@ -2,10 +2,10 @@ name = "Robust Iniwa Custom"
 license = "MIT"
 licenselink = "https://github.com/iniwa/hugo_theme_robust-iniwa/blob/master/LICENSE.md"
 description = "A customized Robust theme ."
-homepage = "https://github.com/iniwa/hugo-theme-robust-iniwa"
+homepage = "https://github.com/iniwa/hugo_theme_robust-iniwa"
 tags = ["blog", "responsive", "custom"]
 features = ["sticky-sidebar", "toc", "accordion"]
-min_version = '0.60.0'
+min_version = '0.158.0'
 
 [author]
   name = "iniwa"
