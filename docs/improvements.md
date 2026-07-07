@@ -15,10 +15,6 @@
 
 ## 1. テンプレート
 
-- [ ] **【中】`single_json_ld.html` の実在しない画像参照を `Site.Params` ベースに修正する**
-  - 現状: `layouts/partials/single_json_ld.html` は publisher logo を `images/logo.png`（両親サイトとも存在しない）、`.Params.thumbnail` 未設定時のフォールバックを `images/default.png`（同じく存在しない）に固定。さらに `thumbnail` を `absURL` で直接解決するため Page Bundle 内画像がルートパスに化ける（diary の `2026/06/index.html` で `https://diary.iniwach.com/images/thumbnail.jpg` という 404 URL を実測）。`iniwach.com` はこのバグ回避のため 42 行の site override を維持している。
-  - 対応案: `meta.html` に既にある Page Bundle 解決ロジック（Page Resources 検索）を JSON-LD にも適用し、publisher logo とデフォルトサムネイルを `Site.Params` から取得可能にする（例: `images/thumbnail/default_thumbnail.png` は両親サイトに存在）。修正後、`iniwach.com` の override を削除して動作確認。
-  - 制約: 既存 frontmatter (`thumbnail`) の解釈を変えない。両親サイトの Search Console 構造化データでエラーが出ないこと。
 
 - [ ] **【低】`HUGO_ENV` 依存の DEV 分岐を現行ワークフローに合わせる**
   - 現状: `getenv "HUGO_ENV"` 分岐が `baseof.html:49` / `list.html:43` / `li_sm.html:26` / `summary.html:31` にあるが、親サイトの開発は `config/development/` 切替で行い `HUGO_ENV` を設定しないため、WordCount 表示は常に無効・GA 抑止分岐も実質不使用（dev config に GA ID がないため実害なし）。
@@ -41,3 +37,6 @@
 
 - [x] **【中】AMP テンプレートの扱いを決める（削除）**（2026-07-07）
   - 対応: 未使用の `layouts/_default/baseof.amp.html`、`layouts/_default/single.amp.html`、`layouts/shortcodes/img.amp.html` を削除。README の変更点表と Features から AMP 対応記述を削除し、`assets/styles.scss` の未使用 `amp-img` セレクタも削除した。
+- [x] **【中】`single_json_ld.html` の実在しない画像参照を `Site.Params` ベースに修正する**（2026-07-07）
+  - 対応: `thumbnail` を Page Resources から解決し、Page Bundle 内画像がルートパスに化けないようにした。publisher logo は `Site.Params.publisher_logo`、未設定時は `Site.Params.author.thumbnail`、さらに未設定時は `images/thumbnail/default_thumbnail.png` を使う。記事画像の未設定時も `Site.Params.default_thumbnail` または同既定画像を使う。併せて `apple-touch-icon` の存在しない `images/logo.png` 参照も `Site.Params.apple_touch_icon` / `author.thumbnail` にフォールバックするよう修正した。
+  - 関連: `iniwach.com` の site override は親 repo 側で削除する。

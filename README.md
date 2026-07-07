@@ -54,6 +54,7 @@ enableRobotsTXT = false  # 自前の static/robots.txt を使う場合は false
   fontfamily        = "'Quicksand', 'Zen Maru Gothic', sans-serif"
   logofontfamily    = "'Quicksand', sans-serif"
   favicon           = "images/favicon.ico"
+  apple_touch_icon  = ""                          # 未設定なら author.thumbnail を使用
   theme_variant     = "garden"                   # data-theme 属性。CSS の variant 切替に利用
   memos_url         = ""                          # Memos セルフホストの URL を入れるとサイドバーに統合表示
 
@@ -102,11 +103,11 @@ enableRobotsTXT = false  # 自前の static/robots.txt を使う場合は false
 | `[mod]` | `layouts/_default/li_sm.html` | サムネイルの Page Resources 解決を追加 |
 | `[mod]` | `layouts/_default/single.html` | `single_meta.html` 呼び出しを `single_json_ld.html` 中心に整理 |
 | `[mod]` | `layouts/404.html` | 「トップへ戻る」「最新の記事 5 件」を表示する独自 404 |
-| `[mod]` | `layouts/partials/meta.html` | OGP/Twitter Card を home/page/その他で分岐、`description` の自動フォールバック (Summary 160 文字)、Page Bundles 対応の OG 画像解決、Satori Workers (`og_worker_url`) 経由の動的 OG 画像、AdSense `<head>` snippet 注入、FontAwesome v6.7.2 ロード、`favicon.ico` の `<link>` |
+| `[mod]` | `layouts/partials/meta.html` | OGP/Twitter Card を home/page/その他で分岐、`description` の自動フォールバック (Summary 160 文字)、Page Bundles 対応の OG 画像解決、Satori Workers (`og_worker_url`) 経由の動的 OG 画像、AdSense `<head>` snippet 注入、FontAwesome v6.7.2 ロード、`favicon.ico` と実在する `apple-touch-icon` の `<link>` |
 | `[mod]` | `layouts/partials/author.html` | Author サムネを `/about_me` リンク化、Twitter → X アイコン、mail/Twitch/YouTube アイコンを追加 |
 | `[mod]` | `layouts/partials/latests.html` | 表示件数を固定 10 件 → `Site.Params.latests_count` (default 50) で可変化 |
 | `[mod]` | `layouts/partials/share.html` | Pocket と Hatena→Twitter の順を整理、Twitter アイコンを X に更新 |
-| `[mod]` | `layouts/partials/single_json_ld.html` | `NewsArticle` → `BlogPosting`、`description`・`author` 等のフィールド整備、URL を `Permalink` に修正 |
+| `[mod]` | `layouts/partials/single_json_ld.html` | `NewsArticle` → `BlogPosting`、`description`・`author` 等のフィールド整備、URL を `Permalink` に修正。Page Bundles 対応の画像解決、`Site.Params` ベースの publisher logo / 既定サムネイル参照を追加 |
 | `[new]` | `layouts/_default/_markup/render-link.html` | 外部リンクを `target="_blank" rel="noopener"` で開く。Amazon/Rakuten 等のアフィリエイト系ドメインには `rel="sponsored"` を自動付与 |
 | `[new]` | `layouts/partials/archives.html` | `archives` taxonomy をサイドバーに表示 |
 | `[new]` | `layouts/partials/memos.html` | `Site.Params.memos_url` を設定すると Memos (セルフホスト) のメモをサイドバーに表示 |

@@ -3,7 +3,19 @@
    - mainEntityOfPage の @id を BaseURL ではなく Permalink に修正
    - description フィールドを追加（frontmatter description 優先・なければ Summary）
    - author 名は params.author.name 優先、未設定なら Site.Title をフォールバック
+   - Page Bundles の thumbnail を Page Resources から解決
+   - publisher.logo と既定記事画像は Site.Params ベースで実在ファイルを参照
 */}}
+{{ $defaultThumb := .Site.Params.default_thumbnail | default "images/thumbnail/default_thumbnail.png" }}
+{{ $publisherLogo := .Site.Params.publisher_logo | default (.Site.Params.author.thumbnail | default $defaultThumb) }}
+{{ $thumb := .Params.thumbnail | default (.Params.image | default $defaultThumb) }}
+{{ $imageURL := "" }}
+{{ with .Resources.GetMatch $thumb }}
+  {{ $imageURL = .Permalink }}
+{{ else }}
+  {{ $imageURL = $thumb | absURL }}
+{{ end }}
+{{ $publisherLogoURL := $publisherLogo | absURL }}
 <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -15,9 +27,7 @@
     "headline": {{ .Title | jsonify | safeJS }},
     "image": {
       "@type": "ImageObject",
-      "url": {{ absURL (.Params.thumbnail | default "images/default.png") | jsonify | safeJS }},
-      "height": 800,
-      "width": 800
+      "url": {{ $imageURL | jsonify | safeJS }}
     },
     "datePublished": {{ .Date.Format "2006-01-02T15:04:05Z07:00" | jsonify | safeJS }},
     "dateModified": {{ .Lastmod.Format "2006-01-02T15:04:05Z07:00" | jsonify | safeJS }},
@@ -30,9 +40,7 @@
       "name": {{ .Site.Title | jsonify | safeJS }},
       "logo": {
         "@type": "ImageObject",
-        "url": {{ printf "%simages/logo.png" .Site.BaseURL | jsonify | safeJS }},
-        "width": 600,
-        "height": 60
+        "url": {{ $publisherLogoURL | jsonify | safeJS }}
       }
     },
     "description": {{ (.Params.description | default (.Summary | plainify | truncate 160)) | jsonify | safeJS }}
