@@ -1,25 +1,56 @@
 # CLAUDE.md
 
-## Codex / Claude Code Workflow
-- This file holds Claude Code execution rules for the `robust-iniwa` theme fork; `AGENTS.md` records design intent and review criteria.
-- Theme work normally arrives via a handoff in a parent site repo (`docs/handoffs/` of `diary.iniwach.com` or `iniwach.com`); read it before editing.
-- Claude Code runs in auto mode (automatic model selection); coding work completes at Sonnet level. Return design questions to Codex instead of deciding locally.
-- Never commit automatically. Leave commits, pushes, and submodule pointer bumps to the user.
+## Purpose
 
-## Project Structure
-- `layouts/` — templates, partials, shortcodes (divergence from upstream is listed in README「上流 (Robust) からの変更点」)
-- `assets/` — SCSS compiled by Hugo Pipes (`styles.scss`, `author.scss`)
-- `static/css/` — split CSS: `variables.css` (colors/sizes, theme variants), `layout.css`, `content.css`, `pagination.css`, `grid.css`, `tip.css`, `memos-style.css`
-- `static/js/` — `load-memos.js`, `tooltip.js`
+This file defines Claude Code's execution rules for the shared `robust-iniwa` Hugo theme. `AGENTS.md` owns design intent, model selection, handoff policy, Codex review, and documentation lifecycle.
 
-## Execution Rules
-- Keep `[mod]` / `[new]` / `[removed]` markers on changed code, and update the README change tables when files are added, modified, or removed.
-- `Site.Params` 未設定時に該当機能が自動無効化される挙動を壊さない (both parent sites must keep building with their existing configs).
-- Keep SRI hashes on external resources; do not add new external origins or dependencies.
-- Preserve XSS-hardening (template escaping, sanitizing in `load-memos.js`).
-- This checkout is usually a detached-HEAD submodule inside a parent repo. Before the user commits, `git checkout master` is required — mention this in the report.
-- After a theme change is committed and pushed, **both** parent repos (`diary.iniwach.com`, `iniwach.com`) need a submodule pointer bump — mention this in the report.
+## Read Before Editing
+
+- Read `AGENTS.md`, this file, the active handoff in the requesting parent repository, and the files listed for inspection.
+- Inspect the relevant README change table and existing `[mod]`, `[new]`, or `[removed]` markers before changing theme files.
+- Confirm that the working repository is the standalone `robust-iniwa` checkout rather than either parent submodule, then identify the approved parent repositories, allowed files, constraints, non-goals, and verification.
+
+## Implementation Rules
+
+- If the user writes in Japanese, respond in Japanese.
+- Implement and verify only the current independently verifiable slice.
+- If the listed files are insufficient to reach the first scoped edit, stop and report the missing discovery or a proposed split instead of broadening the task.
+- Preserve the existing Hugo template, Hugo Pipes, split-CSS, and plain-JavaScript structure.
+- Keep optional `Site.Params` behavior compatible with both parent configurations and safe when unset.
+- Preserve template escaping, DOMPurify sanitization in `load-memos.js`, and SRI hashes on external resources.
+- Keep upstream-divergence markers and update the README change tables when theme files are added, modified, or removed.
+- Return unresolved requirements, cross-project design choices, and security questions to Codex.
+- Subagents are optional and limited to clearly parallel mechanical work within the same files, scope, and constraints.
+
+## Cross-Repository Safety
+
+- Work from the standalone repository root. Do not implement from either detached parent submodule checkout or copy uncommitted theme code into them merely to mirror work.
+- Do not edit either parent repository, update a submodule pointer, check out a delivery branch, commit, push, or deploy unless that action is explicitly included.
+- If another parent or pointer will need synchronization, leave it unchanged and report the repository, required action, and verification impact.
+- Preserve unrelated user and other-agent changes. Treat unexpected parent or submodule diffs as having unknown authorship.
+- Do not edit secrets, credentials, private IDs, local settings, generated parent output, production data, runtime state, or private environment details.
+- Do not add dependencies or change build tooling, packaging, CI/CD, deployment, domains, or external exposure outside the approved scope.
 
 ## Verification
-- Run `hugo server` from a parent site checkout and confirm the affected pages render.
-- When touching params-gated features, check both the params-set and params-unset paths.
+
+Use the smallest checks that demonstrate the approved change:
+
+- Every change: `git diff --check`.
+- Shared theme behavior: run `hugo` from `diary.iniwach.com` and `hugo --environment production --printPathWarnings` from `iniwach.com`.
+- Rendering or interaction: run `hugo server -D` from the affected parent and inspect the page.
+- Parameter-gated behavior: check configured and unset/default paths where practical.
+
+Report any unavailable parent build, browser check, or runtime check as blocked.
+
+## Reporting
+
+Report:
+
+- Changed files.
+- Concise summary.
+- Verification commands and results.
+- Blocked checks.
+- Subagent usage.
+- Parent-site, sibling-site, and submodule-pointer impact.
+- Files edited outside the approved scope.
+- Design questions for Codex.
