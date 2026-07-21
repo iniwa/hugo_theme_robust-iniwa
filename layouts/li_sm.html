@@ -1,0 +1,28 @@
+<article class="lism">
+  <a href="{{ .Permalink }}">
+
+    {{/* [mod] サムネイル解決を _partials/thumbnail.html に共通化 */}}
+    {{ $thumbSrc := partial "thumbnail.html" . }}
+    <div class="thumb" {{ if $thumbSrc }}style="background-image: url('{{ $thumbSrc }}');"{{ end }}></div>
+
+    <div class="inner">
+      <div class="title">{{ .Title }}</div>
+
+      {{/* [mod] Font Awesome icons are rendered by the local SVG partial. */}}
+      <ul class="facts sm">
+        <li>{{ partial "icon.html" "calendar" }}<time datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">{{ .Date.Format ( .Site.Params.dateformat | default "Jan 2, 2006") }}</time></li>
+        {{ with .Section }}
+        <li>{{ partial "icon.html" "bookmark" }}{{ . | upper }}</li>
+        {{ end }}
+        {{ if not hugo.IsProduction }}
+        <li>{{ .WordCount }} Words</li>
+        {{ end }}
+        {{ if .Draft }}
+        {{/* [mod] DRAFT の色はテーマ CSS で管理する。 */}}
+        <li class="draft">DRAFT</li>
+        {{ end }}
+      </ul>
+
+    </div>
+  </a>
+</article>

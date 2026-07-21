@@ -1,50 +1,83 @@
-/* ツールチップ制御用スクリプト (フォーカス解除対応版) */
+/* [mod] hover/focus/click で開き、外側クリック・スクロール・Escape で閉じる */
 document.addEventListener('DOMContentLoaded', () => {
   const tooltips = document.querySelectorAll('.tooltip');
 
-  // 1. ツールチップをクリックした時の動作
   tooltips.forEach(tip => {
-    tip.addEventListener('click', (e) => {
-      e.stopPropagation(); // 親への伝播を止める
+    let wasOpenOnPointerDown = null;
 
-      const isOpen = tip.classList.contains('show');
-      
-      // 他をすべて閉じる
-      closeAllTooltips();
-
-      // もともと開いていなければ開く
-      if (!isOpen) {
-        tip.classList.add('show');
-        adjustPosition(tip);
-      }
+    // [mod] focusin が click より先に発火しても、押下前の状態を基準にトグルする。
+    tip.addEventListener('pointerdown', () => {
+      wasOpenOnPointerDown = tip.classList.contains('show');
     });
+
+    tip.addEventListener('pointercancel', () => {
+      wasOpenOnPointerDown = null;
+    });
+
+    tip.addEventListener('click', event => {
+      event.stopPropagation();
+      const wasOpen = wasOpenOnPointerDown === null
+        ? tip.classList.contains('show')
+        : wasOpenOnPointerDown;
+      wasOpenOnPointerDown = null;
+
+      closeAllTooltips();
+      if (!wasOpen) openTooltip(tip);
+    });
+
+    tip.addEventListener('focusin', () => openTooltip(tip));
+
+    tip.addEventListener('mouseenter', () => openTooltip(tip));
+
+    tip.addEventListener('mouseleave', () => {
+      if (!tip.contains(document.activeElement)) closeTooltip(tip);
+    });
+
+    tip.addEventListener('focusout', event => {
+      if (!tip.contains(event.relatedTarget)) closeTooltip(tip);
+    });
+
   });
 
-  // 2. 画面のどこかをクリックしたら閉じる
+  // [mod] hover だけで開いた場合も Escape で閉じ、フォーカスは変更しない。
+  document.addEventListener('keydown', event => {
+    if (event.key !== 'Escape') return;
+    const hasOpenTooltip = Array.from(tooltips).some(tip => tip.classList.contains('show'));
+    if (!hasOpenTooltip) return;
+    event.preventDefault();
+    event.stopPropagation();
+    closeAllTooltips();
+  }, { capture: true });
+
+  // tooltip の外側をクリックしたらすべて閉じる。
   document.addEventListener('click', () => {
     closeAllTooltips();
   });
 
-  // 3. スクロールしたら閉じる
-  // (capture: true にすることで、ページ内部のあらゆるスクロールを検知)
+  // ページ内部を含むスクロールを検知してすべて閉じる。
   window.addEventListener('scroll', () => {
     closeAllTooltips();
   }, { capture: true, passive: true });
 
-  // --- 関数定義 ---
-
-  function closeAllTooltips() {
-    // すべてのツールチップから .show を外す
-    tooltips.forEach(t => t.classList.remove('show'));
-
-    // 【修正点】フォーカスも強制的に外す
-    // これをしないと、クリック後に :focus CSSが効いたままになり消えません
-    if (document.activeElement && document.activeElement.classList.contains('tooltip')) {
-      document.activeElement.blur();
-    }
+  function openTooltip(target) {
+    closeAllTooltips(target);
+    target.classList.add('show');
+    target.setAttribute('aria-expanded', 'true');
+    // [mod] show を付けた後に表示位置を計算する。
+    adjustPosition(target);
   }
 
-  // 表示位置の自動調整
+  function closeTooltip(target) {
+    target.classList.remove('show');
+    target.setAttribute('aria-expanded', 'false');
+  }
+
+  function closeAllTooltips(except = null) {
+    tooltips.forEach(tip => {
+      if (tip !== except) closeTooltip(tip);
+    });
+  }
+
   function adjustPosition(target) {
     const tooltipText = target.querySelector('.tooltip-text');
     if (!tooltipText) return;
@@ -61,8 +94,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // 左にはみ出す場合
     if (rect.left < padding) {
       tooltipText.style.left = '0';
-      tooltipText.style.transform = 'translateX(-10%)'; 
-    } 
+      tooltipText.style.transform = 'translateX(-10%)';
+    }
     // 右にはみ出す場合
     else if (rect.right > window.innerWidth - padding) {
       tooltipText.style.left = 'auto';

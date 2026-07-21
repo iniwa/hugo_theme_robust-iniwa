@@ -10,8 +10,8 @@ This is the Codex-side working agreement for `robust-iniwa`, a public Hugo theme
 
 - Upstream: `dim0627/hugo_theme_robust`.
 - Repository: `iniwa/hugo_theme_robust-iniwa`.
-- Stack: Hugo templates, Hugo Pipes SCSS, split static CSS, and vanilla JavaScript. Hugo Extended 0.158.0 or newer is required.
-- Primary paths: `layouts/`, `assets/`, `static/css/`, and `static/js/`.
+- Stack: Hugo 0.146+ templates (`layouts/`, `layouts/_markup/`, `layouts/_partials/`, and `layouts/_shortcodes/`), Hugo Pipes SCSS, split CSS sources under `assets/css/` concatenated in order into one minified, SHA-384 fingerprinted bundle with SRI, and vanilla JavaScript. Hugo Extended 0.158.0 or newer is required.
+- Primary paths: `layouts/`, `assets/`, `assets/css/`, and `static/js/`.
 - The canonical development checkout is the standalone repository root. Each parent consumes released commits through a detached-HEAD Git submodule.
 - Theme-wide changes must remain compatible with both parent sites and their existing configurations.
 - CI builds `hugoBasicExample` with the latest Hugo Extended using `./hugo --theme robust --minify`; this repository has no deployment job.

@@ -1,0 +1,29 @@
+{{/* [mod] 上流の single_meta.html 呼び出しを削除し、構造化データ (single_json_ld.html / breadcrumb_json_ld.html) のみを meta block に注入 */}}
+{{ define "title" }}{{ .Title }} - {{ end }}
+
+{{ define "meta" }}
+{{ partial "single_json_ld.html" . }}
+{{ partial "breadcrumb_json_ld.html" . }}
+{{ end }}
+
+{{ define "main" }}
+{{ .Render "summary" }}
+
+<div class="adj mrow">
+  <div class="mcol c6">
+    <header>Next Article</header>
+    {{ with .NextInSection }}
+    {{ .Render "li_sm" }}
+    {{ end }}
+  </div>
+  <div class="mcol c6">
+    <header>Previous Article</header>
+    {{ with .PrevInSection }}
+    {{ .Render "li_sm" }}
+    {{ end }}
+  </div>
+</div>
+
+{{/* [mod] 旧 "_internal/disqus.html" template 呼び出しから現行 partial API へ移行。未設定時は embedded partial の安全な既定動作（何も出力しない） */}}
+{{ partial "disqus.html" . }}
+{{ end }}

@@ -1,9 +1,0 @@
-{{/* [mod] 上流は固定 10 件。Site.Params.latests_count で可変化（未設定時は 50 件） */}}
-<section class="sidebar">
-  <header>LATESTS</header>
-  <div class="articles sm">
-    {{ range $i, $p := (first (.Site.Params.latests_count | default 50) .Site.RegularPages) }}
-    {{ .Render "li_sm" }}
-    {{ end }}
-  </div>
-</section>

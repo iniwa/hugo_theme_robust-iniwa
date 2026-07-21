@@ -1,0 +1,24 @@
+{{/*
+  [new] single のみ BreadcrumbList JSON-LD を出力。
+   - .Ancestors.Reverse（Home → 親の順）に現ページを加え、position 1..N を採番
+   - name は LinkTitle、未設定なら Title にフォールバック。item は Permalink
+   - Home は Ancestors 側にのみ含まれるため重複しない
+   - dict/slice を1回組み立ててから jsonify し safeJS で script 内に出力
+*/}}
+{{ $pages := .Ancestors.Reverse | append . }}
+{{ $itemListElement := slice }}
+{{ range $i, $p := $pages }}
+  {{ $name := $p.LinkTitle | default $p.Title }}
+  {{ $itemListElement = $itemListElement | append (dict
+    "@type" "ListItem"
+    "position" (add $i 1)
+    "name" $name
+    "item" $p.Permalink
+  ) }}
+{{ end }}
+{{ $data := dict
+  "@context" "https://schema.org"
+  "@type" "BreadcrumbList"
+  "itemListElement" $itemListElement
+}}
+<script type="application/ld+json">{{ $data | jsonify | safeJS }}</script>

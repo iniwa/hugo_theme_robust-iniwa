@@ -1,0 +1,255 @@
+/* ==========================================================================
+  ベース設定 (全体の色・フォント・リンク)
+   ========================================================================== */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px;
+}
+
+body {
+  padding-top: 70px;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+}
+
+/* [new] 広告フォーマットごとに読み込み前の領域を予約して CLS を抑える */
+.ad-slot {
+  display: block;
+  width: 100%;
+  min-height: var(--ad-slot-min-height);
+}
+
+.ad-slot--auto,
+.ad-slot--horizontal {
+  min-height: 90px;
+}
+
+.ad-slot--rectangle {
+  min-height: 250px;
+}
+
+.ad-slot--vertical {
+  min-height: 600px;
+}
+
+/* リンク色 */
+a {
+  color: var(--color-link);
+  text-decoration: none;
+  transition: color 0.3s, background-color 0.3s;
+}
+a:hover {
+  color: var(--color-link-hover);
+}
+
+/* [new] キーボード操作時のフォーカス位置をテーマ色で明示 */
+:focus-visible {
+  outline: 3px solid var(--color-link-hover);
+  outline-offset: 3px;
+}
+
+/* 全体の文字色を茶色に統一 */
+h1, h2, h3, h4, h5, h6, p, li, .summary, .title,
+article .title, article .summary {
+  color: var(--color-text) !important;
+}
+
+/* [mod] DRAFT 表示はテーマの accent 相当色を使用 */
+.facts .draft {
+  color: var(--color-draft) !important;
+  font-weight: 700;
+}
+
+/* 角丸設定 (共通) */
+img, .thumb, article, .category a, .tag a, .memo-item, .terms a, .toc {
+  border-radius: var(--radius-base);
+}
+
+/* カードデザイン (背景白 + 影) */
+article, .l-sidebar aside, .memo-item {
+  background-color: #ffffff;
+  box-shadow: 0 4px var(--radius-base) var(--shadow-base);
+  border: none;
+}
+
+
+/* ==========================================================================
+  ホバーアクション (記事カード・LATESTS・Memos)
+   ========================================================================== */
+article.li, .memo-item, article.lism {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+article.li:hover, .memo-item:hover, article.lism:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(84, 124, 148, 0.2);
+}
+
+
+/* ==========================================================================
+  ヘッダー & フッター
+   ========================================================================== */
+.l-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  transition: transform 0.3s ease;
+  background-color: var(--color-bg);
+  border-bottom: none;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.l-header.is-hidden {
+  transform: translateY(-100%);
+}
+
+.l-header .logo a {
+  color: var(--color-text) !important;
+}
+
+.l-footer {
+  background-color: var(--color-bg);
+  border-top: 1px solid #e0e0e0;
+  color: var(--color-text);
+}
+
+
+/* ==========================================================================
+  サイドバーパーツ (ボタン・アイコン)
+   ========================================================================== */
+/* 1. タグ・アーカイブなどのボタン */
+.terms a, .archives a, .tag a, .category a {
+  background-color: var(--color-btn-bg);
+  color: #ffffff;
+  border: none;
+  font-size: 0.85rem;
+  line-height: 1.2;
+  padding: 6px 10px;
+  margin-bottom: 4px;
+  display: inline-block;
+  transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+}
+
+.terms a:hover, .archives a:hover, .tag a:hover, .category a:hover {
+  background-color: var(--color-hover);
+  color: #ffffff;
+  transform: translateY(-3px);
+  box-shadow: 0 5px 10px rgba(84, 124, 148, 0.3);
+}
+/* 2. Author SNSアイコン */
+.l-sidebar .author a, .l-sidebar .social a {
+  border-radius: 50%;
+  /* ホバーアニメーションを有効化 */
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+/* ▼ 追加：SNSアイコンのホバー色も変数で上書きする */
+.l-sidebar .author a:hover, .l-sidebar .social a:hover {
+  background-color: var(--color-hover);
+  color: #ffffff;
+  transform: translateY(-3px);
+}
+
+
+/* ==========================================================================
+  目次ボックス (.toc) - ※記事内リストではなく「箱」のデザイン
+   ========================================================================== */
+.toc {
+  background-color: #f0f4f8;
+  border: 1px solid #d1dbd4;
+  padding: 1.5rem 2.5rem 1.5rem 2rem;
+  margin: 0 0 3rem 3rem;
+  display: block;
+  width: fit-content;
+  width: -moz-fit-content;
+  max-width: 100%;
+}
+
+.toc li {
+  margin: 0rem 0rem 0.3rem 0rem;
+}
+
+.toc nav > ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  background: none;
+}
+
+.toc ul ul {
+  padding-left: 1.5rem;
+  margin-top: 0rem;
+}
+
+.toc ul ul > li {
+  margin: .3rem 0;
+}
+
+.toc a {
+  color: var(--color-link);
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+}
+.toc a:hover {
+  color: var(--color-link-hover);
+  text-decoration: underline;
+}
+
+/* ==========================================================================
+  グリッドシステム & Stickyサイドバー
+   ========================================================================== */
+.mcol {
+  box-sizing: border-box;
+  padding: 0 1rem;
+}
+
+@media screen and (min-width: 768px) {
+  .mrow {
+    display: flex;
+    align-items: stretch;
+    flex-wrap: wrap;
+    margin: 0 -1rem;
+    overflow: visible;
+    float: none;
+  }
+  .c8 {
+    width: 70%;
+    flex: 0 0 70%;
+    max-width: 70%;
+    float: none;
+  }
+  .c4 {
+    width: 30%;
+    flex: 0 0 30%;
+    max-width: 30%;
+    float: none;
+  }
+
+  body, html, main, .l-container { overflow: visible; }
+
+  .l-sidebar {
+    position: -webkit-sticky;
+    position: sticky;
+    z-index: 10;
+    top: 20px;
+    padding-top: 20px;
+    margin-top: 0;
+    height: auto;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .l-sidebar::-webkit-scrollbar { display: none; }
+}
+
+@media screen and (max-width: 767px) {
+  .mrow { display: block; margin: 0; }
+  .mcol { width: 100%; padding: 0; }
+}

@@ -1,0 +1,4 @@
+<!-- [new] archives taxonomy をサイドバーに表示。tags.html / categories.html と同形式 -->
+{{ with .Site.Taxonomies.archives }}
+{{ partial "taxonomy.html" (dict "context" $.Site "key" "archives" "value" .) }}
+{{ end }}

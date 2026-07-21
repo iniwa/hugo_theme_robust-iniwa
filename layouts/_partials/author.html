@@ -1,0 +1,28 @@
+{{/*
+  [mod] 上流に対する変更:
+   - サムネ画像を `/about_me` へのリンクに変更
+   - Twitter のアイコンを X に更新
+   - mail / Twitch / YouTube のアイコンエントリを追加
+   - アイコンをローカル SVG partial に統一し、リンクに日本語 aria-label を追加
+*/}}
+{{ with .Site.Params.author }}
+{{ $authorName := .name | default "著者" }}
+<section class="sidebar">
+  <header>AUTHOR</header>
+  <div class="author">
+    {{ with .thumbnail }}
+    <a href="/about_me" class="author-thumb" aria-label="{{ $authorName }}のプロフィール" style="background-image: url({{ . | absURL }}); display: block;"></a> <!--AuthorアイコンにURL付与-->
+    {{ end }}
+    <div class="author-name">{{ .name }}</div>
+    <ul class="author-facts">
+      {{ with .facebook }}<li><a href="{{ . }}" aria-label="Facebook アカウント（新しいタブで開く）" rel="noopener nofollow" target="_blank">{{ partial "icon.html" "facebook" }}</a></li>{{ end }}
+      {{ with .twitter }}<li><a href="{{ . }}" aria-label="X アカウント（新しいタブで開く）" rel="noopener nofollow" target="_blank">{{ partial "icon.html" "x-twitter" }}</a></li>{{ end }} <!--Xのアイコンへ変更-->
+      {{ with .github }}<li><a href="{{ . }}" aria-label="GitHub アカウント（新しいタブで開く）" rel="noopener nofollow" target="_blank">{{ partial "icon.html" "github" }}</a></li>{{ end }}
+      {{ with .mail }}<li><a href="{{ . }}" aria-label="お問い合わせ（新しいタブで開く）" rel="noopener nofollow" target="_blank">{{ partial "icon.html" "envelope" }}</a></li>{{ end }} <!--追加-->
+      {{ with .Twitch }}<li><a href="{{ . }}" aria-label="Twitch チャンネル（新しいタブで開く）" rel="noopener nofollow" target="_blank">{{ partial "icon.html" "twitch" }}</a></li>{{ end }} <!--追加-->
+      {{ with .YouTube }}<li><a href="{{ . }}" aria-label="YouTube チャンネル（新しいタブで開く）" rel="noopener nofollow" target="_blank">{{ partial "icon.html" "youtube" }}</a></li>{{ end }} <!--追加-->
+    </ul>
+    <div class="author-description">{{ .description | safeHTML }}</div>
+  </div>
+</section>
+{{ end }}

@@ -1,0 +1,56 @@
+{{ define "title" }}{{ if not .IsHome }}{{ .Title }} - {{ end }}{{ end }}
+
+{{ define "main" }}
+{{ if not .IsHome }}
+<header class="page-title">
+  <h1 class="title">{{ .Title }}</h1>
+</header>
+{{ end }}
+
+<div class="articles">
+  <div class="mrow">
+
+    {{ $pctx := . }}
+    {{ if .IsHome }}{{ $pctx = .Site }}{{ end }}
+    {{ $paginator := .Paginate $pctx.RegularPages }}
+    {{ range $paginator.Pages }}
+    <div class="mcol c6">
+      <article class="li">
+        <a href="{{ .Permalink }}">
+
+          {{/* [mod] サムネイル解決を _partials/thumbnail.html に共通化 */}}
+          {{ $thumbSrc := partial "thumbnail.html" . }}
+          <div class="thumb" {{ if $thumbSrc }}style="background-image: url('{{ $thumbSrc }}');"{{ end }}></div>
+
+          <div class="inner">
+            <h2 class="title">{{ .Title }}</h2>
+
+            {{/* [mod] Font Awesome icons are rendered by the local SVG partial. */}}
+            <ul class="facts">
+              <li>{{ partial "icon.html" "calendar" }}<time datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">{{ .Date.Format ( .Site.Params.dateformat | default "Jan 2, 2006") }}</time></li>
+              {{ if ne .Date .Lastmod }} <li>{{ partial "icon.html" "rotate" }}<time datetime="{{ .Lastmod.Format "2006-01-02T15:04:05Z07:00" }}">{{ .Lastmod.Format ( .Site.Params.dateformat | default "Jan 2, 2006") }}</time></li>
+              {{ end }}
+              {{ with .Section }}<li>{{ partial "icon.html" "bookmark" }}{{ . | upper }}</li>{{ end }}
+              {{ if not hugo.IsProduction }}
+              <li>{{ .WordCount }} Words</li>
+              {{ end }}
+              {{ if .Draft }}
+              {{/* [mod] DRAFT の色はテーマ CSS で管理する。 */}}
+              <li class="draft">DRAFT</li>
+              {{ end }}
+            </ul>
+
+            <div class="summary">{{ plainify .Summary | safeHTML }}</div>
+          </div>
+        </a>
+      </article>
+    </div>
+    {{ end }}
+
+  </div>
+</div>
+
+<nav class="paging">
+  {{ partial "pagination.html" . }}
+</nav>
+{{ end }}

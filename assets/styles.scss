@@ -11,7 +11,8 @@ html {
 
 body {
   color: #333;
-  font-family: 'Roboto Slab','ヒラギノ角ゴ Pro W3','Hiragino Kaku Gothic Pro',メイリオ,Meiryo,sans-serif;
+  /* [mod] Google Fonts 未設定時も日本語表示に適した system stack を使用 */
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Yu Gothic Medium', 'Yu Gothic', Meiryo, sans-serif;
   font-feature-settings : "palt";
   font-size: inherit;
   line-height: 1rem;
@@ -41,6 +42,15 @@ a {
   color: #2196f3;
   text-decoration: none;
   transition-duration: .3s;
+}
+
+/* [new] ローカル SVG icon partial の共通サイズ */
+svg.icon {
+  width: 1em;
+  height: 1em;
+  fill: currentColor;
+  display: inline-block;
+  vertical-align: -0.125em;
 }
 
 ul, ol {
@@ -194,6 +204,23 @@ article.li .summary {
 
 article.li .summary::after {
   content: '...';
+}
+
+/* [mod] モバイルの記事カードは固定高と要約の切り詰めを解除する */
+@media (max-width: 768px) {
+  article.li {
+    height: auto;
+  }
+
+  article.li .summary {
+    display: block;
+    overflow: visible;
+    height: auto;
+  }
+
+  article.li .summary::after {
+    display: none;
+  }
 }
 
 article.lism {
@@ -431,7 +458,8 @@ article.sn > .article-body figcaption {
     margin-right: 1rem;
   }
 
-  i {
+  /* [mod] Font Awesome の i 要素からローカル SVG へ変更 */
+  svg.icon {
     color: #cfd8dc;
     margin-right: .5em;
   }
@@ -516,18 +544,21 @@ section {
 .share {
   padding: 0;
 
+  /* [mod] シェア操作のタップターゲットを 40px 四方に統一 */
   a {
     display: inline-block;
     box-shadow: 0 0 0 1px rgba(63,63,68,.05), 0 1px 3px rgba(63,63,68,.1), 0 1px 2px rgba(0,0,0,.05);
-    min-width: 1rem;
-    height: 2rem;
+    box-sizing: border-box;
+    width: 40px;
+    min-width: 40px;
+    height: 40px;
     border-radius: 4px;
     color: #333;
     font-size: .8rem;
     font-weight: 700;
-    line-height: 2rem;
+    line-height: 40px;
     text-align: center;
-    padding: 0 .5rem;
+    padding: 0;
   }
 }
 

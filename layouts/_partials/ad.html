@@ -1,0 +1,58 @@
+{{/*
+  [new] 手動 AdSense 枠。
+   - dict の page / slot / format / full_width を受け取る。
+   - page、本番 build、adsense_client_id、no_ads の gate が active の場合だけ出力する。
+   - inactive の場合は引数を検証せず完全な no-op。active の場合だけ引数を検証する。
+   - loader は meta.html が所有し、この partial 自体はどの layout からも自動では呼び出さない。
+*/}}
+{{- $page := false -}}
+{{- if reflect.IsMap . -}}
+  {{- $page = index . "page" -}}
+{{- end -}}
+{{- if reflect.IsPage $page -}}
+  {{- $noAds := false -}}
+  {{- if eq (printf "%T" $page.Params.no_ads) "bool" -}}
+    {{- $noAds = $page.Params.no_ads -}}
+  {{- end -}}
+  {{- $clientID := "" -}}
+  {{- with $page.Site.Params.adsense_client_id -}}
+    {{- $clientID = strings.TrimSpace (printf "%v" .) -}}
+  {{- end -}}
+  {{- if and hugo.IsProduction (not $noAds) $clientID -}}
+    {{- $slotValue := index . "slot" -}}
+    {{- if ne (printf "%T" $slotValue) "string" -}}
+      {{- errorf "ad.html: slot must be a string of ASCII digits when the ad gate is active" -}}
+    {{- end -}}
+    {{- $slot := strings.TrimSpace (printf "%v" $slotValue) -}}
+    {{- if not (findRE `^[0-9]+$` $slot) -}}
+      {{- errorf "ad.html: slot must be a non-empty string of ASCII digits when the ad gate is active" -}}
+    {{- end -}}
+
+    {{- $formatValue := index . "format" -}}
+    {{- if ne (printf "%T" $formatValue) "string" -}}
+      {{- errorf "ad.html: format must be a string when the ad gate is active" -}}
+    {{- end -}}
+    {{- $format := strings.TrimSpace (printf "%v" $formatValue) -}}
+    {{- $allowedFormats := slice "auto" "horizontal" "vertical" "rectangle" -}}
+    {{- if not (in $allowedFormats $format) -}}
+      {{- errorf "ad.html: format must be one of auto, horizontal, vertical, or rectangle when the ad gate is active" -}}
+    {{- end -}}
+
+    {{- $fullWidth := true -}}
+    {{- if isset . "full_width" -}}
+      {{- $fullWidthValue := index . "full_width" -}}
+      {{- if ne (printf "%T" $fullWidthValue) "bool" -}}
+        {{- errorf "ad.html: full_width must be a boolean when the ad gate is active" -}}
+      {{- end -}}
+      {{- $fullWidth = $fullWidthValue -}}
+    {{- end -}}
+
+<ins class="adsbygoogle ad-slot ad-slot--{{ $format }}"
+     style="display:block"
+     data-ad-client="{{ $clientID }}"
+     data-ad-slot="{{ $slot }}"
+     data-ad-format="{{ $format }}"
+     data-full-width-responsive="{{ $fullWidth }}"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+  {{- end -}}
+{{- end -}}

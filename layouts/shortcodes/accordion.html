@@ -1,7 +1,0 @@
-<!-- [new] <details> を使った折りたたみショートコード。記事 md 内で accordion title="タイトル" の形で呼び出す -->
-<details class="sc-accordion">
-    <summary>{{ .Get "title" | default "Details" }}</summary>
-    <div class="sc-accordion-content">
-        {{ .Inner | markdownify }}
-    </div>
-</details>

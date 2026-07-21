@@ -1,0 +1,64 @@
+<article class="sn">
+
+  {{/* [mod] サムネイル解決を _partials/thumbnail.html に共通化 */}}
+  {{ $thumbSrc := partial "thumbnail.html" . }}
+  <div class="thumb" {{ if $thumbSrc }}style="background-image: url('{{ $thumbSrc }}');"{{ end }}></div>
+
+  <header class="article-header">
+    <h1 class="title">{{ .Title }}</h1>
+
+    {{/* [mod] Font Awesome icons are rendered by the local SVG partial. */}}
+    <ul class="facts">
+      <li>{{ partial "icon.html" "calendar" }}<time datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">{{ .Date.Format ( .Site.Params.dateformat | default "Jan 2, 2006") }}</time></li>
+      {{ if ne .Date .Lastmod }}
+      <li>{{ partial "icon.html" "rotate" }}<time datetime="{{ .Lastmod.Format "2006-01-02T15:04:05Z07:00" }}">{{ .Lastmod.Format ( .Site.Params.dateformat | default "Jan 2, 2006") }}</time></li>
+      {{ end }}
+      {{ if not hugo.IsProduction }}
+      <li>{{ .WordCount }} Words</li>
+      {{ end }}
+      {{ if .Draft }}
+      {{/* [mod] DRAFT の色はテーマ CSS で管理する。 */}}
+      <li class="draft">DRAFT</li>
+      {{ end }}
+    </ul>
+
+</header>
+
+  {{ if .Params.toc }}
+  <div class="toc">
+    {{ .TableOfContents }}
+  </div>
+  {{ end }}
+
+  <div class="article-body">{{ .Content }}</div>
+
+  <footer class="article-footer">
+
+    {{ partial "share.html" . }}
+
+    {{/* [mod] タクソノミーリンクを BaseURL の文字列連結から Page object ベースへ統一 */}}
+    {{ $page := . }}
+    {{ range $taxonomy, $value := $.Site.Taxonomies }}
+    {{ if isset $page.Params $taxonomy }}
+    {{ $terms := $page.GetTerms $taxonomy }}
+    {{ if $terms }}
+    <section class="footer">
+      <header>
+        {{ with $.Site.GetPage $taxonomy }}
+        <a href="{{ .RelPermalink }}">{{ $taxonomy | upper }}</a>
+        {{ else }}
+        <span>{{ $taxonomy | upper }}</span>
+        {{ end }}
+      </header>
+      <ul class="terms">
+        {{ range $terms }}
+        <li><a href="{{ .RelPermalink }}">{{ .Data.Term }}</a></li>
+        {{ end }}
+      </ul>
+    </section>
+    {{ end }}
+    {{ end }}
+    {{ end }}
+  </footer>
+
+</article>

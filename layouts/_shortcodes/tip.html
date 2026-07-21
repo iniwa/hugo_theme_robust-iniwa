@@ -1,0 +1,6 @@
+{{/* [new] hover/focus/click で表示し Escape で閉じるインライン注釈。動作は static/js/tooltip.js / 見た目は assets/css/tip.css */}}
+{{ $id := printf "tip-%s" (substr (sha256 (printf "%s|%s" .Page.RelPermalink .Position)) 0 12) }}
+<span class="tooltip" tabindex="0" aria-describedby="{{ $id }}" aria-expanded="false">
+    {{ .Inner }}
+    <span class="tooltip-text" id="{{ $id }}" role="tooltip">{{ .Get 0 }}</span>
+</span>

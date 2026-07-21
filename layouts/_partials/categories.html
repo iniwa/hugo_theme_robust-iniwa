@@ -1,0 +1,4 @@
+{{/* [mod] BaseURL の文字列連結をやめ、taxonomy.html 側で Page object からリンクを解決する */}}
+{{ with .Site.Taxonomies.categories }}
+{{ partial "taxonomy.html" (dict "context" $.Site "key" "categories" "value" .) }}
+{{ end }}

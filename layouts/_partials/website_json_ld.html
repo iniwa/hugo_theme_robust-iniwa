@@ -1,0 +1,14 @@
+{{/*
+  [new] home のみ WebSite JSON-LD を出力（SearchAction なし）。
+   - description は Site.Params.description、未設定なら Site.Title
+   - dict を1回 jsonify し safeJS で script 内に出力（タイトル/説明に "</script>" や引用符・& を含んでも境界を壊さない）
+*/}}
+{{ $siteDescription := .Site.Params.description | default .Site.Title }}
+{{ $data := dict
+  "@context" "https://schema.org"
+  "@type" "WebSite"
+  "name" .Site.Title
+  "url" .Permalink
+  "description" $siteDescription
+}}
+<script type="application/ld+json">{{ $data | jsonify | safeJS }}</script>

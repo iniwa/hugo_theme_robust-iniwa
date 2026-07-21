@@ -1,0 +1,178 @@
+{{/*
+  [mod] 上流の meta.html を全面差替。
+   - [mod] Font Awesome CDN を廃止し、ローカルのインライン SVG partial へ移行
+   - favicon を <link rel="shortcut icon"> で明示
+   - AdSense <head> snippet を adsense_client_id 設定時 + 本番ビルド時のみ注入（ページの no_ads: true で抑制）
+   - OGP/Twitter Card を IsHome / IsPage / その他で分岐
+   - Page Bundles に対応した OG 画像解決
+   - og_worker_url が設定されていれば Satori Workers 経由の動的 OG 画像を生成
+   - description は frontmatter 優先、未指定なら Summary を 160 文字で truncate、それも空ならサイト説明
+   - [mod] og:locale（Site.Language.Locale のみを使用し region が判定できた場合だけ全ページ共通1個を出力。
+     4文字 script subtag は region とみなさず、判定不能時はタグ省略）、
+     article:published_time / article:modified_time、list/section/taxonomy/term 向けの description・Twitter Card を追加
+*/}}
+<meta name="pinterest" content="nopin">
+<meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+{{/* [mod] Google Fonts の接続先も googlefonts 設定時だけ先読みする。 */}}
+{{ with .Site.Params.googlefonts }}
+<link rel="dns-prefetch preconnect" href="https://fonts.gstatic.com" crossorigin>
+{{ end }}
+<link rel="shortcut icon" href="/images/favicon.ico" />
+<meta name="theme-color" content="{{ .Site.Params.theme_color | default "#263238" }}">
+{{ with .Site.Params.contact }}<meta name="contact" content="{{ . }}">{{ end }}
+{{ hugo.Generator }}
+
+{{/* Google AdSense: adsense_client_id 設定済み + 本番 + no_ads でないページのみ出力 */}}
+{{ with .Site.Params.adsense_client_id }}
+  {{ if and hugo.IsProduction (not $.Params.no_ads) }}
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{ . }}" crossorigin="anonymous"></script>
+  {{ end }}
+{{ end }}
+
+{{/* [mod] 設定値または author thumbnail が実在する場合だけ apple-touch-icon を出力する。 */}}
+{{ $appleTouchIcon := .Site.Params.apple_touch_icon | default .Site.Params.author.thumbnail }}
+{{ with $appleTouchIcon }}
+  {{ $iconURL := strings.TrimSpace (printf "%v" .) }}
+  {{ if $iconURL }}
+    {{ $parsedIconURL := urls.Parse $iconURL }}
+    {{ $emitAppleTouchIcon := $parsedIconURL.IsAbs }}
+    {{ if not $emitAppleTouchIcon }}
+      {{ $iconPath := strings.TrimPrefix "/" $parsedIconURL.Path }}
+      {{ $emitAppleTouchIcon = os.FileExists (path.Join "static" $iconPath) }}
+    {{ end }}
+    {{ if $emitAppleTouchIcon }}
+<link rel="apple-touch-icon" href="{{ $iconURL | absURL }}">
+    {{ end }}
+  {{ end }}
+{{ end }}
+
+{{ range .AlternativeOutputFormats }}
+<link rel="{{ .Rel }}" type="{{ .MediaType.Type | html }}" href="{{ .Permalink | safeURL }}" title="{{ $.Site.Title | safeHTML }}">
+{{ end }}
+
+<meta property="og:site_name" content="{{ .Site.Title }}">
+<meta property="og:url" content="{{ .Permalink }}">
+
+{{/* [new] og:locale: Site.Language.Locale のみを使用（deprecated な Lang フォールバックなし）。
+     ハイフン/アンダースコアを正規化し、先頭を言語、後続から最初の有効な region
+     （ASCII 英字2文字 または 数字3桁。4文字の script subtag は region とみなさない）を1つだけ抽出。
+     region が判定できた場合のみ og:locale を1個出力し、判定できない場合はタグを省略する */}}
+{{ with .Site.Language.Locale }}
+  {{ $localeParts := split (replace . "_" "-") "-" }}
+  {{ $lang := index $localeParts 0 | lower }}
+  {{ $region := "" }}
+  {{ range $i, $part := $localeParts }}
+    {{ if and (eq $region "") (gt $i 0) }}
+      {{ if or (findRE "^[A-Za-z]{2}$" $part) (findRE "^[0-9]{3}$" $part) }}
+        {{ $region = $part }}
+      {{ end }}
+    {{ end }}
+  {{ end }}
+  {{ if and $lang $region }}
+    {{ if findRE "^[A-Za-z]{2}$" $region }}
+      {{ $region = $region | upper }}
+    {{ end }}
+<meta property="og:locale" content="{{ printf "%s_%s" $lang $region }}">
+  {{ end }}
+{{ end }}
+
+{{ $defaultImage := .Site.Params.author.thumbnail | default "images/thumbnail/Author.png" | absURL }}
+{{ $twitterHandle := .Site.Params.author.twitter_handle | default "" }}
+{{ $siteDescription := .Site.Params.description | default .Site.Title }}
+
+{{ if .IsHome }}
+  <meta name="description" content="{{ $siteDescription }}">
+  <meta property="og:title" content="{{ .Site.Title }}">
+  <meta property="og:description" content="{{ $siteDescription }}">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="{{ $defaultImage }}">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ .Site.Title }}">
+  <meta name="twitter:description" content="{{ $siteDescription }}">
+  {{ with $twitterHandle }}
+  <meta name="twitter:site" content="{{ . }}">
+  <meta name="twitter:creator" content="{{ . }}">
+  {{ end }}
+  <meta name="twitter:image" content="{{ $defaultImage }}">
+
+{{ else if .IsPage }}
+  {{ $desc := "" }}
+  {{ with .Params.description }}
+    {{ $desc = . }}
+  {{ else }}
+    {{ $desc = .Summary | plainify | truncate 160 }}
+  {{ end }}
+  {{ if not $desc }}
+    {{ $desc = $siteDescription }}
+  {{ end }}
+  <meta name="description" content="{{ $desc }}">
+  <meta property="og:title" content="{{ .Title }}">
+  <meta property="og:description" content="{{ $desc }}">
+  <meta property="og:type" content="article">
+  <meta property="article:published_time" content="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">
+  <meta property="article:modified_time" content="{{ .Lastmod.Format "2006-01-02T15:04:05Z07:00" }}">
+
+  {{/* 記事画像のURLを決定（Page Bundles対応） */}}
+  {{ $imageAbsUrl := "" }}
+  {{ $thumb := .Params.thumbnail }}
+  {{ if $thumb }}
+    {{ with .Resources.GetMatch $thumb }}
+      {{ $imageAbsUrl = .Permalink }}
+    {{ else }}
+      {{ $imageAbsUrl = $thumb | absURL }}
+    {{ end }}
+  {{ else if .Params.image }}
+    {{ $imageAbsUrl = .Params.image | absURL }}
+  {{ end }}
+
+  {{/* OG画像URLの決定: og_worker_url が設定されていれば Satori Workers 経由、なければ画像URLを直接使用 */}}
+  {{ $ogImageUrl := "" }}
+  {{ with .Site.Params.og_worker_url }}
+    {{ $workerUrl := . }}
+    {{ $titleQuery := $.Title | urlquery }}
+    {{ $siteQuery := $.Site.Title | urlquery }}
+    {{ $bgQuery := "" }}
+    {{/* localhostのURLは Workers に渡せない（生成エラーになるため） */}}
+    {{ if and $imageAbsUrl (not (in $imageAbsUrl "localhost")) (not (in $imageAbsUrl "127.0.0.1")) }}
+      {{ $bgQuery = $imageAbsUrl | urlquery }}
+    {{ end }}
+    {{ $versionQuery := $.Lastmod.Unix }}
+    {{ $ogImageUrl = printf "%s?title=%s&bg=%s&site=%s&v=%d" $workerUrl $titleQuery $bgQuery $siteQuery $versionQuery }}
+  {{ else }}
+    {{ if $imageAbsUrl }}
+      {{ $ogImageUrl = $imageAbsUrl }}
+    {{ else }}
+      {{ $ogImageUrl = $defaultImage }}
+    {{ end }}
+  {{ end }}
+
+  <meta property="og:image" content="{{ $ogImageUrl }}">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ .Title }}">
+  <meta name="twitter:description" content="{{ $desc }}">
+  {{ with $twitterHandle }}
+  <meta name="twitter:site" content="{{ . }}">
+  <meta name="twitter:creator" content="{{ . }}">
+  {{ end }}
+  <meta name="twitter:image" content="{{ $ogImageUrl }}">
+
+{{ else }}
+  {{/* その他のページ（アーカイブ・タクソノミー・タームリスト等） */}}
+  {{ $desc := .Params.description | default $siteDescription }}
+  <meta name="description" content="{{ $desc }}">
+  <meta property="og:title" content="{{ .Title }}">
+  <meta property="og:description" content="{{ $desc }}">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="{{ $defaultImage }}">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ .Title }}">
+  <meta name="twitter:description" content="{{ $desc }}">
+  {{ with $twitterHandle }}
+  <meta name="twitter:site" content="{{ . }}">
+  <meta name="twitter:creator" content="{{ . }}">
+  {{ end }}
+  <meta name="twitter:image" content="{{ $defaultImage }}">
+{{ end }}

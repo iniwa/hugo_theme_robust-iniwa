@@ -1,0 +1,61 @@
+{{/* [new] Markdown画像のリソース解決と遅延読み込み属性を行うレンダリングフック */}}
+{{- $destination := .Destination -}}
+{{- $src := $destination -}}
+{{- $image := false -}}
+{{- $parsed := urls.Parse $destination -}}
+{{- $path := strings.TrimPrefix "./" $parsed.Path -}}
+
+{{- if not $parsed.IsAbs -}}
+  {{- with .PageInner.Resources.Get $path -}}
+    {{- if reflect.IsImageResource . -}}
+      {{- $image = . -}}
+    {{- end -}}
+  {{- end -}}
+  {{- if not $image -}}
+    {{- with resources.Get $path -}}
+      {{- if reflect.IsImageResource . -}}
+        {{- $image = . -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{- if $image -}}
+  {{- $src = $image.RelPermalink -}}
+  {{- with $parsed.RawQuery -}}
+    {{- $src = printf "%s?%s" $src . -}}
+  {{- end -}}
+  {{- with $parsed.Fragment -}}
+    {{- $src = printf "%s#%s" $src . -}}
+  {{- end -}}
+{{- end -}}
+
+{{- $hasImageMeta := false -}}
+{{- if $image -}}
+  {{- $hasImageMeta = reflect.IsImageResourceWithMeta $image -}}
+{{- end -}}
+
+{{- $eager := false -}}
+{{- with .PageInner.Params.eager_images -}}
+  {{- if eq (printf "%T" .) "string" -}}
+    {{- if eq . $destination -}}
+      {{- $eager = true -}}
+    {{- end -}}
+  {{- else if reflect.IsSlice . -}}
+    {{- range . -}}
+      {{- if and (eq (printf "%T" .) "string") (eq . $destination) -}}
+        {{- $eager = true -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{- $loading := "lazy" -}}
+{{- $attributeLoading := .Attributes.loading -}}
+{{- if and (eq (printf "%T" $attributeLoading) "string") (or (eq $attributeLoading "lazy") (eq $attributeLoading "eager")) -}}
+  {{- $loading = $attributeLoading -}}
+{{- else if $eager -}}
+  {{- $loading = "eager" -}}
+{{- end -}}
+
+<img src="{{ $src }}" alt="{{ .PlainText }}"{{ with .Title }} title="{{ . }}"{{ end }} loading="{{ $loading }}" decoding="async"{{ if $hasImageMeta }} width="{{ $image.Width }}" height="{{ $image.Height }}"{{ end }}{{ range $key, $value := .Attributes }}{{ $attributeName := lower $key }}{{ $managed := or (in (slice "src" "alt" "title" "loading" "decoding") $attributeName) (and $hasImageMeta (in (slice "width" "height") $attributeName)) }}{{ if and (not $managed) $value }}{{ printf " %s=%q" $key ($value | transform.HTMLEscape) | safeHTMLAttr }}{{ end }}{{ end }}>

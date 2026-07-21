@@ -1,0 +1,13 @@
+{{/* [new] list.html / summary.html / li_sm.html で重複していたサムネイル解決ロジックを共通化。
+     Page Resources から一致すれば RelPermalink、なければ static パスとして relURL、
+     未設定なら空文字列を return する。 */}}
+{{ $thumb := .Params.thumbnail }}
+{{ $thumbSrc := "" }}
+{{ with .Resources.GetMatch $thumb }}
+  {{ $thumbSrc = .RelPermalink }}
+{{ else }}
+  {{ with $thumb }}
+    {{ $thumbSrc = . | relURL }}
+  {{ end }}
+{{ end }}
+{{ return $thumbSrc }}

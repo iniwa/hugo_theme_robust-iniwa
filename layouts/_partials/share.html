@@ -1,0 +1,10 @@
+<!-- [mod] 上流から Pocket を除去。ローカル SVG アイコン、query encoding、aria-label を適用 -->
+<aside class="share">
+  {{/* [mod] urlquery 後の既知安全な URL 部分を safeURL とし、href 文脈での二重エンコードを防ぐ */}}
+  {{ $permalink := .Permalink | urlquery | safeURL }}
+  {{ $title := .Title | urlquery | safeURL }}
+  <a href="https://twitter.com/intent/tweet?url={{ $permalink }}&amp;text={{ $title }}&amp;tw_p=tweetbutton" title="Xでシェア" aria-label="Xでこの記事をシェア（新しいタブで開く）" class="tw" target="_blank" rel="noopener nofollow">{{ partial "icon.html" "x-twitter" }}</a>
+  <a href="https://www.facebook.com/sharer.php?u={{ $permalink }}&amp;t={{ $title }}" title="Facebookでシェア" aria-label="Facebookでこの記事をシェア（新しいタブで開く）" class="fb" target="_blank" rel="noopener nofollow">{{ partial "icon.html" "facebook" }}</a>
+  <a href="https://b.hatena.ne.jp/add?mode=confirm&amp;url={{ $permalink }}&amp;title={{ $title }}" title="はてなブックマーク" aria-label="はてなブックマークでこの記事をシェア（新しいタブで開く）" class="ht" target="_blank" rel="noopener nofollow">B!</a>
+  <a href="https://social-plugins.line.me/lineit/share?url={{ $permalink }}" title="LINEでシェア" aria-label="LINEでこの記事をシェア（新しいタブで開く）" class="ln" target="_blank" rel="noopener nofollow">{{ partial "icon.html" "line" }}</a>
+</aside>

@@ -1,0 +1,54 @@
+/* ==========================================================================
+   テーマカラー定義 (CSS変数)
+   ========================================================================== */
+
+/* 1. 共通の基本設定 (デフォルト) */
+:root {
+  --color-bg: #fdfcf8;
+  --color-text: #5d4037;
+  --radius-base: 12px;
+  --shadow-base: 0 4px 12px rgba(84, 124, 148, 0.1);
+
+  /* デフォルト値（万が一設定が漏れたとき用） */
+  --color-accent: #455a64;
+  --color-hover: #c43a12;
+  --color-btn-bg: #455a64;
+  --color-link: #1565c0;
+  --color-link-hover: #0d47a1;
+  --color-draft: #1565c0;
+  --color-header-border: #b0c4de;
+  /* [new] 広告枠の最小高さ（広告の予約領域） */
+  --ad-slot-min-height: 90px;
+}
+
+/* 2. いにわの庭 (Garden) - 暖色・茶色ベース */
+[data-theme="garden"] {
+  --color-bg: #fdfcf8;
+  --color-text: #5d4037;
+  --color-accent: #455a64; /* 白文字ボタンでも WCAG AA を満たすブルーグレー */
+  --color-hover: #c43a12;  /* テラコッタ */
+  --color-btn-bg: #455a64;
+  --color-link: #1565c0;
+  --color-link-hover: #0d47a1;
+  --color-draft: #1565c0;
+  --color-header-border: #b0c4de;
+
+  --radius-base: 12px;
+  --shadow-base: 0 4px 12px rgba(84, 124, 148, 0.1);
+}
+
+/* 3. いにわの欠け耳 (Tech) - 寒色・クールベース */
+[data-theme="tech"] {
+  --color-bg: #f5f8fa;     /* 少し青みがかった白 */
+  --color-text: #37474f;   /* 青みがかったグレー黒 */
+  --color-accent: #006064; /* 白文字ボタンでも WCAG AA を満たす濃いシアン */
+  --color-hover: #006fa8;  /* 濃い青 */
+  --color-btn-bg: #006064;
+  --color-link: #1565c0;
+  --color-link-hover: #0d47a1;
+  --color-draft: #1565c0;
+  --color-header-border: #4dd0e1;
+
+  --radius-base: 4px;      /* 角丸を小さくしてシャープに */
+  --shadow-base: 0 2px 5px rgba(0, 0, 0, 0.1);
+}

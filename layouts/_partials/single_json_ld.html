@@ -1,0 +1,37 @@
+{{/*
+  [mod] 上流の NewsArticle ベースの JSON-LD を BlogPosting にリプレース。
+   - mainEntityOfPage の @id を BaseURL ではなく Permalink に修正
+   - description フィールドを追加（frontmatter description 優先・なければ Summary）
+   - author 名は params.author.name 優先、未設定なら Site.Title をフォールバック
+   - Page Bundles の thumbnail を Page Resources から解決
+   - publisher.logo と既定記事画像は Site.Params ベースで実在ファイルを参照
+   - [mod] 文字列手組みの JSON を廃止し、dict を1回 jsonify して safeJS で出力
+     （タイトル/説明に "</script>" や引用符・& を含んでも script 境界を壊さない）
+*/}}
+{{ $defaultThumb := .Site.Params.default_thumbnail | default "images/thumbnail/default_thumbnail.png" }}
+{{ $publisherLogo := .Site.Params.publisher_logo | default (.Site.Params.author.thumbnail | default $defaultThumb) }}
+{{ $thumb := .Params.thumbnail | default (.Params.image | default $defaultThumb) }}
+{{ $imageURL := "" }}
+{{ with .Resources.GetMatch $thumb }}
+  {{ $imageURL = .Permalink }}
+{{ else }}
+  {{ $imageURL = $thumb | absURL }}
+{{ end }}
+{{ $publisherLogoURL := $publisherLogo | absURL }}
+{{ $data := dict
+  "@context" "https://schema.org"
+  "@type" "BlogPosting"
+  "mainEntityOfPage" (dict "@type" "WebPage" "@id" .Permalink)
+  "headline" .Title
+  "image" (dict "@type" "ImageObject" "url" $imageURL)
+  "datePublished" (.Date.Format "2006-01-02T15:04:05Z07:00")
+  "dateModified" (.Lastmod.Format "2006-01-02T15:04:05Z07:00")
+  "author" (dict "@type" "Person" "name" (.Site.Params.author.name | default .Site.Title))
+  "publisher" (dict
+    "@type" "Organization"
+    "name" .Site.Title
+    "logo" (dict "@type" "ImageObject" "url" $publisherLogoURL)
+  )
+  "description" (.Params.description | default (.Summary | plainify | truncate 160))
+}}
+<script type="application/ld+json">{{ $data | jsonify | safeJS }}</script>

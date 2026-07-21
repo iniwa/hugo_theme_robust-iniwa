@@ -1,0 +1,55 @@
+/* ----------------------------------------------- */
+/* Memos カードスタイル                           */
+/* ----------------------------------------------- */
+.memo-item {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+
+  /* ホバーアクションの準備 */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* ホバー設定は layout.css で一括管理していますが、
+   念のためここにも残しておいても干渉はしません */
+.memo-item:hover {
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+  transform: translateY(-4px);
+}
+
+/* 本文エリア */
+.memo-content {
+  word-wrap: break-word;
+  color: #333;
+  font-size: 0.85rem;
+}
+.memo-content > *:first-child { margin-top: 0; }
+.memo-content > *:last-child { margin-bottom: 0; }
+
+/* 画像コンテナ */
+.memo-resources {
+  margin-top: 12px;
+}
+
+/* 日付エリア */
+.memo-date {
+  display: block;
+  margin-top: 12px;
+  font-size: 0.85em;
+  color: #888;
+  text-align: right;
+}
+
+/* サイドバー設定 */
+#memos-sidebar {
+  max-height: none;
+  overflow-y: visible;
+  padding: 8px;
+}
+
+#memos-article {
+  margin-top: 24px;
+}
