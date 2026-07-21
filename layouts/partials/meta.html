@@ -2,7 +2,7 @@
   [mod] 上流の meta.html を全面差替。
    - FontAwesome を v5 → v6.7.2 にアップデート
    - favicon を <link rel="shortcut icon"> で明示
-   - AdSense <head> snippet を adsense_client_id 設定時 + 本番ビルド時のみ注入
+   - AdSense <head> snippet を adsense_client_id 設定時 + 本番ビルド時のみ注入（ページの no_ads: true で抑制）
    - OGP/Twitter Card を IsHome / IsPage / その他で分岐
    - Page Bundles に対応した OG 画像解決
    - og_worker_url が設定されていれば Satori Workers 経由の動的 OG 画像を生成
@@ -21,9 +21,9 @@
 {{ with .Site.Params.contact }}<meta name="contact" content="{{ . }}">{{ end }}
 {{ hugo.Generator }}
 
-{{/* Google AdSense: adsense_client_id が設定されていて本番ビルド時のみ出力 */}}
+{{/* Google AdSense: adsense_client_id 設定済み + 本番 + no_ads でないページのみ出力 */}}
 {{ with .Site.Params.adsense_client_id }}
-  {{ if hugo.IsProduction }}
+  {{ if and hugo.IsProduction (not $.Params.no_ads) }}
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{ . }}" crossorigin="anonymous"></script>
   {{ end }}
 {{ end }}
@@ -35,7 +35,6 @@
 <link rel="{{ .Rel }}" type="{{ .MediaType.Type | html }}" href="{{ .Permalink | safeURL }}" title="{{ $.Site.Title | safeHTML }}">
 {{ end }}
 
-<meta charset="utf-8">
 <meta property="og:site_name" content="{{ .Site.Title }}">
 <meta property="og:url" content="{{ .Permalink }}">
 

@@ -1,7 +1,7 @@
 # robust-iniwa
 
 [Robust](https://github.com/dim0627/hugo_theme_robust) (by Daisuke Tsuji) を個人用にフォーク・改造した Hugo テーマです。  
-個人用途の機能を多分に搭載していますが、`Site.Params` 未設定のものは自動で無効化されるためそのままでも動作します。
+個人用途の機能を多分に搭載していますが、`Site.Params` のオプション設定は、未設定時に機能を無効化するか、このREADMEに記載した安全な既定値へフォールバックします。
 
 **AI を併用してコードを書いています。** 変更箇所には可能な限りコメントで `[mod]`, `[new]`, `[removed]` マーカーを入れていますが、抜けがあるかもしれません。  
 見つけた場合は遠慮なく PR / Issue へ。
@@ -84,6 +84,15 @@ enableRobotsTXT = false  # 自前の static/robots.txt を使う場合は false
       unsafe = true   # YouTube 埋め込み等を残すために必要
 ```
 
+ページ単位で AdSense を表示しない場合は、コンテンツの front matter に `no_ads: true` を指定します。
+
+```yaml
+---
+title: 広告なしのページ
+no_ads: true
+---
+```
+
 色を変えたい場合は `static/css/variables.css` を編集してください。  
 フッターには `/notice` と `/privacy` への固定リンクがあります。それぞれ `content/notice.md` / `content/privacy.md` を用意してください。
 
@@ -97,13 +106,13 @@ enableRobotsTXT = false  # 自前の static/robots.txt を使う場合は false
 
 | 種別 | ファイル | 内容 |
 |:---|:---|:---|
-| `[mod]` | `layouts/_default/baseof.html` | サイドバー構成を全面差替（archives / categories / latests / memos）、`data-theme` 属性、Cloudflare Pages 等の自前 CSS 分割（variables/layout/content/pagination/grid/tip/memos）、スクロール連動ヘッダー JS、Umami 連携、フッターに Notice/Privacy リンク追加。highlight.js / `custom.css` / `Site.Copyright` 周りのデッドコードを削除 |
-| `[mod]` | `layouts/_default/list.html` | 内部 `_internal/pagination.html` への切替、Page Bundles 対応のサムネイル取得ロジック追加、Lastmod 表示追加、c6 グリッド化 |
-| `[mod]` | `layouts/_default/summary.html` | サムネイルの Page Resources 解決を追加、シェアボタンを記事下部のみに整理 |
-| `[mod]` | `layouts/_default/li_sm.html` | サムネイルの Page Resources 解決を追加 |
+| `[mod]` | `layouts/_default/baseof.html` | サイドバー構成を全面差替（archives / categories / latests / memos）、`data-theme` 属性、Cloudflare Pages 等の自前 CSS 分割（variables/layout/content/pagination/grid/tip/memos）、スクロール連動ヘッダー JS、Umami 連携、フッターに Notice/Privacy リンク追加。ルート `<html lang="{{ .Site.Language.Locale }}">`、charset の保持位置を baseof.html に統一。highlight.js / `custom.css` / `Site.Copyright` 周りのデッドコードを削除 |
+| `[mod]` | `layouts/_default/list.html` | 内部 `_internal/pagination.html` への切替、Page Bundles 対応のサムネイル取得ロジック追加、Date / Lastmod の `datetime` Format を `2006-01-02T15:04:05Z07:00` に統一、Lastmod 表示追加、c6 グリッド化 |
+| `[mod]` | `layouts/_default/summary.html` | サムネイルの Page Resources 解決を追加、Date / Lastmod の `datetime` Format を `2006-01-02T15:04:05Z07:00` に統一、シェアボタンを記事下部のみに整理 |
+| `[mod]` | `layouts/_default/li_sm.html` | サムネイルの Page Resources 解決を追加、Date の `datetime` Format を `2006-01-02T15:04:05Z07:00` に修正 |
 | `[mod]` | `layouts/_default/single.html` | `single_meta.html` 呼び出しを `single_json_ld.html` 中心に整理 |
 | `[mod]` | `layouts/404.html` | 「トップへ戻る」「最新の記事 5 件」を表示する独自 404 |
-| `[mod]` | `layouts/partials/meta.html` | OGP/Twitter Card を home/page/その他で分岐、`description` の自動フォールバック (Summary 160 文字)、Page Bundles 対応の OG 画像解決、Satori Workers (`og_worker_url`) 経由の動的 OG 画像、AdSense `<head>` snippet 注入、FontAwesome v6.7.2 ロード、`favicon.ico` と実在する `apple-touch-icon` の `<link>` |
+| `[mod]` | `layouts/partials/meta.html` | OGP/Twitter Card を home/page/その他で分岐、`description` の自動フォールバック (Summary 160 文字)、Page Bundles 対応の OG 画像解決、Satori Workers (`og_worker_url`) 経由の動的 OG 画像、`adsense_client_id` 設定時かつ本番ビルド時の AdSense `<head>` snippet 注入（ページの `no_ads: true` で抑制）、FontAwesome v6.7.2 ロード、`favicon.ico` と実在する `apple-touch-icon` の `<link>`、baseof.html と重複していた charset を削除 |
 | `[mod]` | `layouts/partials/author.html` | Author サムネを `/about_me` リンク化、Twitter → X アイコン、mail/Twitch/YouTube アイコンを追加 |
 | `[mod]` | `layouts/partials/latests.html` | 表示件数を固定 10 件 → `Site.Params.latests_count` (default 50) で可変化 |
 | `[mod]` | `layouts/partials/share.html` | Pocket と Hatena→Twitter の順を整理、Twitter アイコンを X に更新 |
@@ -144,7 +153,7 @@ enableRobotsTXT = false  # 自前の static/robots.txt を使う場合は false
  - OGP の改善（Page Bundles 対応・Satori Workers 連携）
  - Memos / Umami の表示
  - 外部リンクの新規タブ＆affiliate sponsored 自動付与
- - AdSense `<head>` snippet 注入
+ - AdSense `<head>` snippet 注入（`adsense_client_id` 設定時・本番ビルド時。ページごとの `no_ads: true` で抑制可）
  - 独自 404 ページ
 
 ---
@@ -199,59 +208,38 @@ enableRobotsTXT = false  # 自前の static/robots.txt を使う場合は false
 
 ---
 
-## 以下オリジナル README
+## インストール
 
-This theme is maintained by [Ress](https://github.com/ress997).
+Hugo Extended 0.158.0 以上が必要です。Git submoduleとして導入する場合は、
+利用するHugoサイトのルートで次を実行します。
 
-# What is this.
-
-This is the grid based theme for Hugo.
-
-[Hugo :: A fast and modern static website engine](https://gohugo.io/)
-
-**You need the Hugo `extended` version.**
-
-## PC View
-
-![screenshot](https://raw.githubusercontent.com/dim0627/hugo_theme_robust/master/images/screenshot.png)
-
-## SP View(Responsive)
-
-![screenshot](https://raw.githubusercontent.com/dim0627/hugo_theme_robust/master/images/responsive.png)
-
-# Features
-
-* Responsive design
-* Google Analytics
-* Thumbnail
-* Share button
-* Structured data(Article and Breadcrumb)
-* Twitter cards
-* OGP
-* Disqus
-* Syntax Highlight
-* Show `IsDraft`.
-
-## Installation
-
-```
-$ cd themes
-$ git clone https://github.com/dim0627/hugo_theme_robust.git
+```shell
+git submodule add -b master https://github.com/iniwa/hugo_theme_robust-iniwa.git themes/robust-iniwa
 ```
 
-[Hugo \- Installing Hugo](http://gohugo.io/overview/installing/)
+サイト設定ではテーマ名を指定します。
 
-# Development mode
-
-Supported development mode.
-
+```toml
+theme = "robust-iniwa"
 ```
+
+## 開発と検証
+
+このテーマ単独ではコンテンツを持たないため、プレビューとサイトビルドは
+利用するHugoサイトのルートから実行します。
+
+```shell
 hugo server --environment development --watch --buildDrafts --buildFuture
 ```
 
-Development builds are
+このフォークの変更では、`git diff --check`に加え、`diary.iniwach.com`で
+`hugo`、`iniwach.com`で
+`hugo --environment production --printPathWarnings`を実行します。表示や操作に
+影響する場合は、該当する親サイトで`hugo server -D`を起動して確認します。
 
-* Not show Google Analytics tags.
-* Show `WordCount`.
+GitHub Actionsはpushとpull request時に、最新のHugo Extendedと
+`hugoBasicExample`を使って`--minify`ビルドを実行します。
 
-Use `{{ if hugo.IsProduction }} ... {{ end }}` for production-only template output.
+上流テーマの原文READMEと履歴は
+[`dim0627/hugo_theme_robust`](https://github.com/dim0627/hugo_theme_robust)
+を参照してください。
