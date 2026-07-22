@@ -1,0 +1,73 @@
+{{- /*
+  [new] 事前生成 OGP publisher 用の catalog。
+  production の通常pageと明示指定したcollection外pageをgenerator schemaVersion 1に変換し、
+  Page Resource、static thumbnail、static image の順で既存の画像契約を再現する。
+  外部画像は取得せず、generator がリポジトリ root から読める POSIX path を出力する。
+*/ -}}
+{{- if not hugo.IsProduction -}}
+  {{- errorf "OGP catalog must be generated with the production environment" -}}
+{{- end -}}
+{{- $articles := slice -}}
+{{- $publishedPages := site.RegularPages -}}
+{{- $catalogPageRefs := site.Params.ogp_catalog_page_refs | default (slice) -}}
+{{- range $ref := $catalogPageRefs -}}
+  {{- with site.GetPage $ref -}}
+    {{- if ne .Kind "page" -}}
+      {{- errorf "OGP catalog page ref must resolve to a page: %s" $ref -}}
+    {{- end -}}
+    {{- $publishedPages = $publishedPages | append . -}}
+  {{- else -}}
+    {{- errorf "OGP catalog page ref was not found: %s" $ref -}}
+  {{- end -}}
+{{- end -}}
+{{- range sort $publishedPages "Permalink" -}}
+  {{- $page := . -}}
+  {{- $background := "" -}}
+  {{- $thumb := .Params.thumbnail | default "" -}}
+  {{- if $thumb -}}
+    {{- with .Resources.GetMatch $thumb -}}
+      {{- if not $page.File -}}
+        {{- errorf "OGP catalog cannot resolve the source file for %q" $page.Permalink -}}
+      {{- end -}}
+      {{- $backgroundPath := path.Join "content" (path.Dir $page.File.Path) $thumb -}}
+      {{- if not (os.FileExists $backgroundPath) -}}
+        {{- errorf "OGP catalog background does not exist for %q: %s" $page.Permalink $backgroundPath -}}
+      {{- end -}}
+      {{- $background = $backgroundPath -}}
+    {{- else -}}
+      {{- $parsedThumb := urls.Parse (printf "%v" $thumb) -}}
+      {{- $relativeThumb := path.Clean (strings.TrimPrefix "/" $parsedThumb.Path) -}}
+      {{- if or $parsedThumb.IsAbs $parsedThumb.RawQuery $parsedThumb.Fragment (eq $relativeThumb ".") (eq $relativeThumb "..") (strings.HasPrefix $relativeThumb "../") -}}
+        {{- errorf "OGP catalog only supports local thumbnail paths for %q" $page.Permalink -}}
+      {{- end -}}
+      {{- $backgroundPath := path.Join "static" $relativeThumb -}}
+      {{- if not (os.FileExists $backgroundPath) -}}
+        {{- errorf "OGP catalog background does not exist for %q: %s" $page.Permalink $backgroundPath -}}
+      {{- end -}}
+      {{- $background = $backgroundPath -}}
+    {{- end -}}
+  {{- else -}}
+    {{- with .Params.image -}}
+      {{- $parsedImage := urls.Parse (printf "%v" .) -}}
+      {{- $relativeImage := path.Clean (strings.TrimPrefix "/" $parsedImage.Path) -}}
+      {{- if or $parsedImage.IsAbs $parsedImage.RawQuery $parsedImage.Fragment (eq $relativeImage ".") (eq $relativeImage "..") (strings.HasPrefix $relativeImage "../") -}}
+        {{- errorf "OGP catalog only supports local image paths for %q" $page.Permalink -}}
+      {{- end -}}
+      {{- $backgroundPath := path.Join "static" $relativeImage -}}
+      {{- if not (os.FileExists $backgroundPath) -}}
+        {{- errorf "OGP catalog background does not exist for %q: %s" $page.Permalink $backgroundPath -}}
+      {{- end -}}
+      {{- $background = $backgroundPath -}}
+    {{- end -}}
+  {{- end -}}
+  {{- $article := dict
+    "id" .Permalink
+    "title" .Title
+    "site" .Site.Title
+  -}}
+  {{- with $background -}}
+    {{- $article = merge $article (dict "background" .) -}}
+  {{- end -}}
+  {{- $articles = $articles | append $article -}}
+{{- end -}}
+{{- dict "schemaVersion" 1 "articles" $articles | jsonify (dict "indent" "  ") -}}

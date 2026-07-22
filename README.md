@@ -47,7 +47,7 @@ enableRobotsTXT = false  # 自前の static/robots.txt を使う場合は false
 [params]
   description       = "サイト説明"
   latests_count     = 10                         # サイドバー LATESTS の表示件数（未設定なら 10）
-  og_worker_url     = ""                          # Satori Workers の URL を入れると OGP 画像を動的生成
+  og_worker_url     = ""                          # commit manifest がない場合に使う動的 OGP fallback
   adsense_client_id = ""                          # 設定すると本番ビルド時のみ AdSense スクリプトを <head> に挿入
   dateformat        = "2006/01/02"
   googlefonts       = "https://fonts.googleapis.com/css2?..." # 設定時のみ読み込み。未設定なら system font
@@ -87,6 +87,31 @@ enableRobotsTXT = false  # 自前の static/robots.txt を使う場合は false
 
 `googlefonts` を未設定または空にすると外部フォントと `fonts.gstatic.com` の preconnect は出力せず、
 日本語向けのシステムフォントスタックを使用します。`fontfamily` を設定した場合は、その値が優先されます。
+
+### 事前生成 OGP
+
+親サイトの data/ogp_manifest.json に schemaVersion 1 のcommit manifestが存在する場合、記事の og:image と twitter:image はmanifest内のcanonical permalinkに対応するimmutable R2 URLを使います。manifestが存在するのに記事entryやHTTPS URLが不正な場合は、Hugo buildを停止します。
+
+manifestがない通常のローカルbuildでは、og_worker_url、記事thumbnail、既定画像の順による従来のfallbackを維持します。これによりPages設定を切り替える前と、切り戻し時にも既存Workerを利用できます。
+
+親サイトはcatalog専用output formatで layouts/home.ogpcatalog.json を呼び出します。このtemplateはproductionの通常pageをgenerator catalogへ変換します。Hugoの仕様上、build.list: neverのpageは全page collectionから除外されるため、親サイトのconfig/ogp-catalog.tomlでparams.ogp_catalog_page_refsに明示します。Page Resourceはcontent配下、通常のthumbnail/imageはstatic配下のローカルPNG/JPEGとして解決し、外部background URLはbuild errorにします。
+
+catalog outputはGitea workflow内だけでHUGO_OUTPUTS_HOMEを上書きして有効化し、通常のPages buildには含めません。Cloudflare Pagesでは、次のbuild commandを使用します。
+
+    node themes/robust-iniwa/scripts/build-pages.mjs
+
+build gateが必要とする環境変数は次のとおりです。
+
+- CF_PAGES_COMMIT_SHA: Pagesが自動設定
+- OGP_PUBLIC_BASE_URL: R2 custom domainのHTTPS origin
+- HUGO_VERSION=0.160.1
+- NODE_VERSION=22.18.0
+
+build gateは同じcommit SHAのmanifests/v1/<sha>.jsonを最大10分待ちます。取得したJSONのcommit、generator digest、全image key、fingerprint、公開origin、UTF-8、response sizeを検証し、一時data fileを置いてproduction Hugo buildを実行した後に削除します。R2 API credentialはPagesへ渡しません。
+
+依存なしのmanifest gate testは次で実行します。
+
+    node --test scripts/build-pages.test.mjs
 
 ページ単位で AdSense を表示しない場合は、コンテンツの front matter に `no_ads: true` を指定します。
 
@@ -135,7 +160,8 @@ Hugo 0.146+ の lookup 構造に合わせ、通常のレイアウトは `layouts
 | `[mod]` | `layouts/taxonomy.html` | `terms.html` を Hugo 0.146+ の taxonomy page layout へ移行（`term.html` は作成しない）。タクソノミー見出しリンクを `BaseURL` の文字列連結から `Data.Terms.Alphabetical` の Page object ベースへ変更 |
 | `[mod]` | `layouts/single.html` | `single_meta.html` 呼び出しを `single_json_ld.html` / `breadcrumb_json_ld.html` 中心に整理。Disqus を旧 `{{ template "_internal/disqus.html" . }}` から現行 `{{ partial "disqus.html" . }}` API へ移行（未設定時は embedded partial の安全な既定動作） |
 | `[mod]` | `layouts/404.html` | 「トップへ戻る」「最新の記事 5 件」を表示する独自 404 |
-| `[mod]` | `layouts/_partials/meta.html` | OGP/Twitter Card を home/page/その他で分岐、`description` の自動フォールバック (Summary 160 文字 → `Site.Params.description` → `Site.Title`)、Page Bundles 対応の OG 画像解決、Satori Workers (`og_worker_url`) 経由の動的 OG 画像、`adsense_client_id` 設定時かつ本番ビルド時の AdSense `<head>` snippet 注入（ページの `no_ads: true` で抑制）、Font Awesome CDN を廃止してローカル SVG 化、Google Fonts 用 preconnect を設定時だけ出力、`favicon.ico` と実在する `apple-touch-icon` の `<link>`、baseof.html と重複していた charset を削除、`theme-color` を `Site.Params.theme_color` で上書き可能に（既定値は維持）。全ページ共通の `og:locale`（`Site.Language.Locale` のみを使用し deprecated な `Lang` フォールバックは廃止。ハイフン/アンダースコアを正規化し、ASCII 英字2文字または数字3桁の region のみを採用、4文字の script subtag は region とみなさず、region が判定できない場合はタグを省略）、記事ページの `article:published_time` / `article:modified_time`、list/section/taxonomy/term ページの description・Twitter Card を追加 |
+| `[mod]` | `layouts/_partials/meta.html` | OGP/Twitter Card を home/page/その他で分岐、commit manifest存在時はcanonical permalinkに対応するimmutable R2 URLを必須使用し、不完全なmanifestでbuildを停止。manifest未配置時はSatori Workers (`og_worker_url`) / 記事画像へfallback。`description` の自動フォールバック (Summary 160 文字 → `Site.Params.description` → `Site.Title`)、Page Bundles 対応の OG 画像解決、`adsense_client_id` 設定時かつ本番ビルド時の AdSense `<head>` snippet 注入（ページの `no_ads: true` で抑制）、Font Awesome CDN を廃止してローカル SVG 化、Google Fonts 用 preconnect を設定時だけ出力、`favicon.ico` と実在する `apple-touch-icon` の `<link>`、baseof.html と重複していた charset を削除、`theme-color` を `Site.Params.theme_color` で上書き可能に（既定値は維持）。全ページ共通の `og:locale`（`Site.Language.Locale` のみを使用し deprecated な `Lang` フォールバックは廃止。ハイフン/アンダースコアを正規化し、ASCII 英字2文字または数字3桁の region のみを採用、4文字の script subtag は region とみなさず、region が判定できない場合はタグを省略）、記事ページの `article:published_time` / `article:modified_time`、list/section/taxonomy/term ページの description・Twitter Card を追加 |
+| `[new]` | `layouts/home.ogpcatalog.json` | productionの通常pageと`params.ogp_catalog_page_refs`で明示した`build.list: never`のpageからschemaVersion 1の事前生成catalogを出力。Page Resourceとstatic画像をrepository相対pathへ解決し、外部background URLを拒否 |
 | `[new]` | `layouts/_partials/ad.html` | `page` / `slot` / `format` の dict 契約による広告枠。production、client ID 非空、`no_ads` 無効時だけ `.ad-slot`、`<ins>`、push script を各1個出力し、inactive 時は完全な no-op。active 時だけ必須引数を検証し、loader の追加や自動配置は行わない |
 | `[mod]` | `layouts/_partials/author.html` | Author サムネを `/about_me` リンク化、Twitter → X、mail/Twitch/YouTube エントリを追加。全アイコンをローカル SVG 化し、リンクへ日本語のアクセシブル名と `noopener nofollow` を付与 |
 | `[mod]` | `layouts/_partials/latests.html` | 表示件数を固定 10 件 → `Site.Params.latests_count` (default 10) で可変化 |
@@ -308,6 +334,9 @@ hugo server --environment development --watch --buildDrafts --buildFuture
 `hugo`、`iniwach.com`で
 `hugo --environment production --printPathWarnings`を実行します。表示や操作に
 影響する場合は、該当する親サイトで`hugo server -D`を起動して確認します。
+
+事前生成OGPの変更では、上記に加えて
+`node --test scripts/build-pages.test.mjs`を実行します。
 
 GitHub Actionsはpushとpull request時に、最新のHugo Extendedと
 `hugoBasicExample`を使って`--minify`ビルドを実行します。

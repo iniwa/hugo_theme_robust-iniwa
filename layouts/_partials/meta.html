@@ -6,6 +6,7 @@
    - OGP/Twitter Card を IsHome / IsPage / その他で分岐
    - Page Bundles に対応した OG 画像解決
    - og_worker_url が設定されていれば Satori Workers 経由の動的 OG 画像を生成
+   - data/ogp_manifest.json が存在する場合は事前生成 OGP を優先し、不完全な manifest でビルドを止める
    - description は frontmatter 優先、未指定なら Summary を 160 文字で truncate、それも空ならサイト説明
    - [mod] og:locale（Site.Language.Locale のみを使用し region が判定できた場合だけ全ページ共通1個を出力。
      4文字 script subtag は region とみなさず、判定不能時はタグ省略）、
@@ -126,24 +127,46 @@
     {{ $imageAbsUrl = .Params.image | absURL }}
   {{ end }}
 
-  {{/* OG画像URLの決定: og_worker_url が設定されていれば Satori Workers 経由、なければ画像URLを直接使用 */}}
+  {{/* [mod] OG画像URLの決定:
+       commit manifest があれば immutable R2 URL を必須使用し、
+       manifest がないローカル環境・移行期間だけ従来の Worker / 記事画像へフォールバックする。 */}}
   {{ $ogImageUrl := "" }}
-  {{ with .Site.Params.og_worker_url }}
-    {{ $workerUrl := . }}
-    {{ $titleQuery := $.Title | urlquery }}
-    {{ $siteQuery := $.Site.Title | urlquery }}
-    {{ $bgQuery := "" }}
-    {{/* localhostのURLは Workers に渡せない（生成エラーになるため） */}}
-    {{ if and $imageAbsUrl (not (in $imageAbsUrl "localhost")) (not (in $imageAbsUrl "127.0.0.1")) }}
-      {{ $bgQuery = $imageAbsUrl | urlquery }}
-    {{ end }}
-    {{ $versionQuery := $.Lastmod.Unix }}
-    {{ $ogImageUrl = printf "%s?title=%s&bg=%s&site=%s&v=%d" $workerUrl $titleQuery $bgQuery $siteQuery $versionQuery }}
-  {{ else }}
-    {{ if $imageAbsUrl }}
-      {{ $ogImageUrl = $imageAbsUrl }}
+  {{ with hugo.Data.ogp_manifest }}
+    {{ $manifestImages := index . "images" }}
+    {{ if not $manifestImages }}
+      {{ errorf "OGP manifest has no images map" }}
     {{ else }}
-      {{ $ogImageUrl = $defaultImage }}
+      {{ $manifestEntry := index $manifestImages $.Permalink }}
+      {{ if not $manifestEntry }}
+        {{ errorf "OGP manifest has no entry for %q" $.Permalink }}
+      {{ else }}
+        {{ $manifestURL := index $manifestEntry "url" | default "" }}
+        {{ $parsedManifestURL := urls.Parse $manifestURL }}
+        {{ if or (not $parsedManifestURL.IsAbs) (ne $parsedManifestURL.Scheme "https") }}
+          {{ errorf "OGP manifest entry for %q has an invalid HTTPS URL" $.Permalink }}
+        {{ else }}
+          {{ $ogImageUrl = $manifestURL }}
+        {{ end }}
+      {{ end }}
+    {{ end }}
+  {{ else }}
+    {{ with .Site.Params.og_worker_url }}
+      {{ $workerUrl := . }}
+      {{ $titleQuery := $.Title | urlquery }}
+      {{ $siteQuery := $.Site.Title | urlquery }}
+      {{ $bgQuery := "" }}
+      {{/* localhostのURLは Workers に渡せない（生成エラーになるため） */}}
+      {{ if and $imageAbsUrl (not (in $imageAbsUrl "localhost")) (not (in $imageAbsUrl "127.0.0.1")) }}
+        {{ $bgQuery = $imageAbsUrl | urlquery }}
+      {{ end }}
+      {{ $versionQuery := $.Lastmod.Unix }}
+      {{ $ogImageUrl = printf "%s?title=%s&bg=%s&site=%s&v=%d" $workerUrl $titleQuery $bgQuery $siteQuery $versionQuery }}
+    {{ else }}
+      {{ if $imageAbsUrl }}
+        {{ $ogImageUrl = $imageAbsUrl }}
+      {{ else }}
+        {{ $ogImageUrl = $defaultImage }}
+      {{ end }}
     {{ end }}
   {{ end }}
 
