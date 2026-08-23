@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This file defines Claude Code's execution rules for the shared `robust-iniwa` Hugo theme. `AGENTS.md` owns design intent, model selection, handoff policy, Codex review, and documentation lifecycle.
+This file is a compatibility boundary for readers that look for `CLAUDE.md`; `AGENTS.md` is authoritative for design, runtime-selected roles, delegation, review, and documentation lifecycle.
 
 ## Read Before Editing
 
