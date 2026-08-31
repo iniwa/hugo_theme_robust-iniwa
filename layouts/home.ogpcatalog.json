@@ -1,7 +1,7 @@
 {{- /*
   [new] 事前生成 OGP publisher 用の catalog。
   production の通常pageと明示指定したcollection外pageをgenerator schemaVersion 1に変換し、
-  Page Resource、static thumbnail、static image の順で既存の画像契約を再現する。
+  thumbnail を image より優先し、どちらも Page Resource、static の順で解決する。
   外部画像は取得せず、generator がリポジトリ root から読める POSIX path を出力する。
 */ -}}
 {{- if not hugo.IsProduction -}}
@@ -23,7 +23,7 @@
 {{- range sort $publishedPages "Permalink" -}}
   {{- $page := . -}}
   {{- $background := "" -}}
-  {{- $thumb := .Params.thumbnail | default "" -}}
+  {{- $thumb := .Params.thumbnail | default (.Params.image | default "") -}}
   {{- if $thumb -}}
     {{- with .Resources.GetMatch $thumb -}}
       {{- if not $page.File -}}
@@ -38,22 +38,9 @@
       {{- $parsedThumb := urls.Parse (printf "%v" $thumb) -}}
       {{- $relativeThumb := path.Clean (strings.TrimPrefix "/" $parsedThumb.Path) -}}
       {{- if or $parsedThumb.IsAbs $parsedThumb.RawQuery $parsedThumb.Fragment (eq $relativeThumb ".") (eq $relativeThumb "..") (strings.HasPrefix $relativeThumb "../") -}}
-        {{- errorf "OGP catalog only supports local thumbnail paths for %q" $page.Permalink -}}
+        {{- errorf "OGP catalog only supports local thumbnail/image paths for %q" $page.Permalink -}}
       {{- end -}}
       {{- $backgroundPath := path.Join "static" $relativeThumb -}}
-      {{- if not (os.FileExists $backgroundPath) -}}
-        {{- errorf "OGP catalog background does not exist for %q: %s" $page.Permalink $backgroundPath -}}
-      {{- end -}}
-      {{- $background = $backgroundPath -}}
-    {{- end -}}
-  {{- else -}}
-    {{- with .Params.image -}}
-      {{- $parsedImage := urls.Parse (printf "%v" .) -}}
-      {{- $relativeImage := path.Clean (strings.TrimPrefix "/" $parsedImage.Path) -}}
-      {{- if or $parsedImage.IsAbs $parsedImage.RawQuery $parsedImage.Fragment (eq $relativeImage ".") (eq $relativeImage "..") (strings.HasPrefix $relativeImage "../") -}}
-        {{- errorf "OGP catalog only supports local image paths for %q" $page.Permalink -}}
-      {{- end -}}
-      {{- $backgroundPath := path.Join "static" $relativeImage -}}
       {{- if not (os.FileExists $backgroundPath) -}}
         {{- errorf "OGP catalog background does not exist for %q: %s" $page.Permalink $backgroundPath -}}
       {{- end -}}

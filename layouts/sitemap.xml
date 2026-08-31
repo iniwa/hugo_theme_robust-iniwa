@@ -1,7 +1,7 @@
-<!-- [new] /tags/ /categories/ /archives/ /_draft/ を sitemap から除外する独自テンプレート -->
+<!-- [new] sitemap.disable と /tags/ /categories/ /archives/ /_draft/ の除外を尊重する独自テンプレート -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   {{ range .Data.Pages }}
-  {{ if or (in .Permalink "/tags/") (in .Permalink "/categories/") (in .Permalink "/archives/") (in .Permalink "/_draft/")}}
+  {{ if or .Sitemap.Disable (in .Permalink "/tags/") (in .Permalink "/categories/") (in .Permalink "/archives/") (in .Permalink "/_draft/")}}
   {{ else }}
   <url>
     <loc>{{ .Permalink }}</loc>{{ if not .Lastmod.IsZero }}
