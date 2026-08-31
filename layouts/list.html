@@ -1,5 +1,11 @@
 {{ define "title" }}{{ if not .IsHome }}{{ .Title }} - {{ end }}{{ end }}
 
+{{/* [mod] 一覧本体と同じページ集合で初期化し、2ページ目以降も自身の URL を canonical にする。 */}}
+{{ define "canonical" }}
+{{ $paginator := partial "list-paginator.html" . }}
+<link rel="canonical" href="{{ $paginator.URL | absURL }}">
+{{ end }}
+
 {{ define "main" }}
 {{ if not .IsHome }}
 <header class="page-title">
@@ -10,9 +16,7 @@
 <div class="articles">
   <div class="mrow">
 
-    {{ $pctx := . }}
-    {{ if .IsHome }}{{ $pctx = .Site }}{{ end }}
-    {{ $paginator := .Paginate $pctx.RegularPages }}
+    {{ $paginator := partial "list-paginator.html" . }}
     {{ range $paginator.Pages }}
     <div class="mcol c6">
       <article class="li">

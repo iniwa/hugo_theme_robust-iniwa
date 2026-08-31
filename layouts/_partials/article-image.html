@@ -1,0 +1,12 @@
+{{/* [new] OGP と JSON-LD で記事画像を共通解決する。thumbnail を image より優先し、
+     Page Resources に一致すれば Permalink、それ以外は absURL を返す。
+     未設定時は空文字列を返し、呼び出し側の既定画像・Worker の動作を保つ。 */}}
+{{ $imageURL := "" }}
+{{ with .Params.thumbnail | default .Params.image }}
+  {{ with $.Resources.GetMatch . }}
+    {{ $imageURL = .Permalink }}
+  {{ else }}
+    {{ $imageURL = . | absURL }}
+  {{ end }}
+{{ end }}
+{{ return $imageURL }}

@@ -3,6 +3,8 @@
 [Robust](https://github.com/dim0627/hugo_theme_robust) (by Daisuke Tsuji) を個人用にフォーク・改造した Hugo テーマです。  
 個人用途の機能を多分に搭載していますが、`Site.Params` のオプション設定は、未設定時に機能を無効化するか、このREADMEに記載した安全な既定値へフォールバックします。
 
+Disqus 連携は廃止しました。`services.disqus.shortname` が残っていても、コメント欄や関連スクリプトは出力しません。
+
 **AI を併用してコードを書いています。** 変更箇所には可能な限りコメントで `[mod]`, `[new]`, `[removed]` マーカーを入れていますが、抜けがあるかもしれません。  
 見つけた場合は遠慮なく PR / Issue へ。
 
@@ -53,8 +55,10 @@ enableRobotsTXT = false  # 自前の static/robots.txt を使う場合は false
   googlefonts       = "https://fonts.googleapis.com/css2?..." # 設定時のみ読み込み。未設定なら system font
   fontfamily        = "'Quicksand', 'Zen Maru Gothic', sans-serif"
   logofontfamily    = "'Quicksand', sans-serif"
-  favicon           = "images/favicon.ico"
+  favicon           = "images/favicon.ico"       # 未設定時も同じパス。ファイルは親サイトの static/ に配置
   apple_touch_icon  = ""                          # 未設定なら実在する author.thumbnail を使用。どちらもなければ出力しない
+  default_thumbnail = ""                          # JSON-LD の既定記事画像。未設定ならテーマ同梱の images/default.jpg
+  publisher_logo    = ""                          # JSON-LD のロゴ。未設定なら author.thumbnail、両方なければ logo を省略
   theme_variant     = "garden"                   # data-theme 属性。CSS の variant 切替に利用
   theme_color       = ""                          # <meta name="theme-color"> の値。未設定なら "#263238"
   memos_url         = ""                          # Memos セルフホストの URL を入れるとサイドバーに統合表示
@@ -68,8 +72,6 @@ enableRobotsTXT = false  # 自前の static/robots.txt を使う場合は false
   page = [ "HTML" ]
 
 [services]
-  [services.disqus]
-    shortname = 'disqus-ID'
   [services.googleAnalytics]
     id = 'G-XXXXXXXXXX'
 
@@ -92,9 +94,11 @@ enableRobotsTXT = false  # 自前の static/robots.txt を使う場合は false
 
 親サイトの data/ogp_manifest.json に schemaVersion 1 のcommit manifestが存在する場合、記事の og:image と twitter:image はmanifest内のcanonical permalinkに対応するimmutable R2 URLを使います。manifestが存在するのに記事entryやHTTPS URLが不正な場合は、Hugo buildを停止します。
 
-manifestがない通常のローカルbuildでは、og_worker_url、記事thumbnail、既定画像の順による従来のfallbackを維持します。これによりPages設定を切り替える前と、切り戻し時にも既存Workerを利用できます。
+manifestがない通常のローカルbuildでは、og_worker_url、記事画像、既定画像の順による従来のfallbackを維持します。記事画像はthumbnailをimageより優先し、どちらもPage Bundle内のリソースを先に探し、なければサイト相対または絶対URLとして解決します。これによりPages設定を切り替える前と、切り戻し時にも既存Workerを利用できます。
 
-親サイトはcatalog専用output formatで layouts/home.ogpcatalog.json を呼び出します。このtemplateはproductionの通常pageをgenerator catalogへ変換します。Hugoの仕様上、build.list: neverのpageは全page collectionから除外されるため、親サイトのconfig/ogp-catalog.tomlでparams.ogp_catalog_page_refsに明示します。Page Resourceはcontent配下、通常のthumbnail/imageはstatic配下のローカルPNG/JPEGとして解決し、外部background URLはbuild errorにします。
+OGP/Twitter Cardの既定画像はauthor.thumbnail、未設定ならテーマ同梱のimages/default.jpgです。JSON-LDの既定記事画像はdefault_thumbnail、未設定なら同じ同梱画像を使います。publisher.logoはpublisher_logo、author.thumbnailの順で参照し、両方未設定なら省略します。明示する画像パスは親サイト側で実在するファイルを指定してください。
+
+親サイトはcatalog専用output formatで layouts/home.ogpcatalog.json を呼び出します。このtemplateはproductionの通常pageをgenerator catalogへ変換します。Hugoの仕様上、build.list: neverのpageは全page collectionから除外されるため、親サイトのconfig/ogp-catalog.tomlでparams.ogp_catalog_page_refsに明示します。thumbnail/imageのどちらもPage Resourceはcontent配下、それ以外はstatic配下のローカルPNG/JPEGとして解決し、外部background URLはbuild errorにします。
 
 catalog outputはGitea workflow内だけでHUGO_OUTPUTS_HOMEを上書きして有効化し、通常のPages buildには含めません。Cloudflare Pagesでは、次のbuild commandを使用します。
 
@@ -153,20 +157,20 @@ Hugo 0.146+ の lookup 構造に合わせ、通常のレイアウトは `layouts
 
 | 種別 | ファイル | 内容 |
 |:---|:---|:---|
-| `[mod]` | `layouts/baseof.html` | Hugo 0.146+ のルート layout 構造へ移行。サイドバー構成を全面差替（archives / categories / latests / memos）、`data-theme` 属性、分割 CSS source を1本へ配信、スクロール連動ヘッダー JS、Umami 連携、フッターに Notice/Privacy リンク追加。ルート `<html lang="{{ .Site.Language.Locale }}">`、charset の保持位置を baseof.html に統一。author / archives / tags / categories / latests / memos の6 partial を `partialCached` で出力。Google Fonts は設定時だけ読み込み、未設定時は system font。ヘッダーロゴのリンクに `h-logo` class を付与し `logofontfamily` を適用可能に。highlight.js / `custom.css` / `Site.Copyright` 周りのデッドコードを削除。home のみ `website_json_ld.html`（WebSite JSON-LD）を `<head>` に出力 |
-| `[mod]` | `layouts/list.html` | Hugo 0.146+ の現行 `pagination.html` partial へ切替、`_partials/thumbnail.html` 経由のサムネイル解決、Date / Lastmod の `datetime` Format を `2006-01-02T15:04:05Z07:00` に統一、Lastmod 表示追加、日付・更新・セクションのアイコンをローカル SVG 化、DRAFT 色を共通 class 化、c6 グリッド化 |
+| `[mod]` | `layouts/baseof.html` | Hugo 0.146+ のルート layout 構造へ移行。サイドバー構成を全面差替（archives / categories / latests / memos）、`data-theme` 属性、分割 CSS source を1本へ配信、スクロール連動ヘッダー JS、Umami 連携、フッターに Notice/Privacy リンク追加。ルート `<html lang="{{ .Site.Language.Locale }}">`、charset の保持位置を baseof.html に統一。author / archives / tags / categories / latests / memos の6 partial を `partialCached` で出力。Google Fonts は設定時だけ読み込み、未設定時は system font。ヘッダーロゴのリンクに `h-logo` class を付与し `logofontfamily` を適用可能に。highlight.js / `custom.css` / `Site.Copyright` 周りのデッドコードを削除。home のみ `website_json_ld.html`（WebSite JSON-LD）を `<head>` に出力。canonical を block 化して一覧ページ固有の URL に対応 |
+| `[mod]` | `layouts/list.html` | Hugo 0.146+ の現行 `pagination.html` partial へ切替、`_partials/thumbnail.html` 経由のサムネイル解決、Date / Lastmod の `datetime` Format を `2006-01-02T15:04:05Z07:00` に統一、Lastmod 表示追加、日付・更新・セクションのアイコンをローカル SVG 化、DRAFT 色を共通 class 化、c6 グリッド化。canonical と一覧本体で同じ `list-paginator.html` を使い、2ページ目以降も自身の URL を出力 |
 | `[mod]` | `layouts/summary.html` | `_partials/thumbnail.html` 経由のサムネイル解決、Date / Lastmod の `datetime` Format を `2006-01-02T15:04:05Z07:00` に統一、日付・更新アイコンをローカル SVG 化、DRAFT 色を共通 class 化、シェアボタンを記事下部のみに整理、空の `with .Section` ブロックを削除、記事フッターのタクソノミーリンクを `GetTerms`/Page object ベースに統一 |
 | `[mod]` | `layouts/li_sm.html` | `_partials/thumbnail.html` 経由のサムネイル解決、Date の `datetime` Format を `2006-01-02T15:04:05Z07:00` に修正、日付・セクションのアイコンをローカル SVG 化、DRAFT 色を共通 class 化 |
 | `[mod]` | `layouts/taxonomy.html` | `terms.html` を Hugo 0.146+ の taxonomy page layout へ移行（`term.html` は作成しない）。タクソノミー見出しリンクを `BaseURL` の文字列連結から `Data.Terms.Alphabetical` の Page object ベースへ変更 |
-| `[mod]` | `layouts/single.html` | `single_meta.html` 呼び出しを `single_json_ld.html` / `breadcrumb_json_ld.html` 中心に整理。Disqus を旧 `{{ template "_internal/disqus.html" . }}` から現行 `{{ partial "disqus.html" . }}` API へ移行（未設定時は embedded partial の安全な既定動作） |
+| `[mod]` / `[removed]` | `layouts/single.html` | `single_meta.html` 呼び出しを `single_json_ld.html` / `breadcrumb_json_ld.html` 中心に整理。Disqus のコメント埋め込みと関連する外部スクリプトの読み込みを廃止 |
 | `[mod]` | `layouts/404.html` | 「トップへ戻る」「最新の記事 5 件」を表示する独自 404 |
-| `[mod]` | `layouts/_partials/meta.html` | OGP/Twitter Card を home/page/その他で分岐、commit manifest存在時はcanonical permalinkに対応するimmutable R2 URLを必須使用し、不完全なmanifestでbuildを停止。manifest未配置時はSatori Workers (`og_worker_url`) / 記事画像へfallback。`description` の自動フォールバック (Summary 160 文字 → `Site.Params.description` → `Site.Title`)、Page Bundles 対応の OG 画像解決、`adsense_client_id` 設定時かつ本番ビルド時の AdSense `<head>` snippet 注入（ページの `no_ads: true` で抑制）、Font Awesome CDN を廃止してローカル SVG 化、Google Fonts 用 preconnect を設定時だけ出力、`favicon.ico` と実在する `apple-touch-icon` の `<link>`、baseof.html と重複していた charset を削除、`theme-color` を `Site.Params.theme_color` で上書き可能に（既定値は維持）。全ページ共通の `og:locale`（`Site.Language.Locale` のみを使用し deprecated な `Lang` フォールバックは廃止。ハイフン/アンダースコアを正規化し、ASCII 英字2文字または数字3桁の region のみを採用、4文字の script subtag は region とみなさず、region が判定できない場合はタグを省略）、記事ページの `article:published_time` / `article:modified_time`、list/section/taxonomy/term ページの description・Twitter Card を追加 |
-| `[new]` | `layouts/home.ogpcatalog.json` | productionの通常pageと`params.ogp_catalog_page_refs`で明示した`build.list: never`のpageからschemaVersion 1の事前生成catalogを出力。Page Resourceとstatic画像をrepository相対pathへ解決し、外部background URLを拒否 |
+| `[mod]` | `layouts/_partials/meta.html` | OGP/Twitter Card を home/page/その他で分岐、commit manifest存在時はcanonical permalinkに対応するimmutable R2 URLを必須使用し、不完全なmanifestでbuildを停止。manifest未配置時はSatori Workers (`og_worker_url`) / 記事画像へfallback。`description` の自動フォールバック (Summary 160 文字 → `Site.Params.description` → `Site.Title`)、`article-image.html` による thumbnail / image 両方の Page Bundles 対応と実在する既定画像へのフォールバック、`adsense_client_id` 設定時かつ本番ビルド時の AdSense `<head>` snippet 注入（ページの `no_ads: true` で抑制）、Font Awesome CDN を廃止してローカル SVG 化、Google Fonts 用 preconnect を設定時だけ出力、`params.favicon`（未設定なら `images/favicon.ico`）と実在する `apple-touch-icon` の `<link>`、baseof.html と重複していた charset を削除、`theme-color` を `Site.Params.theme_color` で上書き可能に（既定値は維持）。全ページ共通の `og:locale`（`Site.Language.Locale` のみを使用し deprecated な `Lang` フォールバックは廃止。ハイフン/アンダースコアを正規化し、ASCII 英字2文字または数字3桁の region のみを採用、4文字の script subtag は region とみなさず、region が判定できない場合はタグを省略）、記事ページの `article:published_time` / `article:modified_time`、list/section/taxonomy/term ページの description・Twitter Card を追加 |
+| `[new]` | `layouts/home.ogpcatalog.json` | productionの通常pageと`params.ogp_catalog_page_refs`で明示した`build.list: never`のpageからschemaVersion 1の事前生成catalogを出力。thumbnail / image 両方のPage Resourceとstatic画像をrepository相対pathへ解決し、外部background URLを拒否 |
 | `[new]` | `layouts/_partials/ad.html` | `page` / `slot` / `format` の dict 契約による広告枠。production、client ID 非空、`no_ads` 無効時だけ `.ad-slot`、`<ins>`、push script を各1個出力し、inactive 時は完全な no-op。active 時だけ必須引数を検証し、loader の追加や自動配置は行わない |
 | `[mod]` | `layouts/_partials/author.html` | Author サムネを `/about_me` リンク化、Twitter → X、mail/Twitch/YouTube エントリを追加。全アイコンをローカル SVG 化し、リンクへ日本語のアクセシブル名と `noopener nofollow` を付与 |
 | `[mod]` | `layouts/_partials/latests.html` | 表示件数を固定 10 件 → `Site.Params.latests_count` (default 10) で可変化 |
 | `[mod]` | `layouts/_partials/share.html` | Pocket と Hatena→Twitter の順を整理し、Twitter アイコンを X に更新。動的クエリ値を `urlquery` で符号化し、日本語のアクセシブル名とローカル SVG を使用 |
-| `[mod]` | `layouts/_partials/single_json_ld.html` | `NewsArticle` → `BlogPosting`、`description`・`author` 等のフィールド整備、URL を `Permalink` に修正。Page Bundles 対応の画像解決、`Site.Params` ベースの publisher logo / 既定サムネイル参照を追加。文字列手組みの JSON を廃止し、`dict` を1回 `jsonify | safeJS` する構成に変更（タイトル・説明中の `</script>` や引用符・`&` でも script 境界が壊れない） |
+| `[mod]` | `layouts/_partials/single_json_ld.html` | `NewsArticle` → `BlogPosting`、`description`・`author` 等のフィールド整備、URL を `Permalink` に修正。`article-image.html` で画像解決を共有し、既定記事画像は `default_thumbnail` または同梱画像、publisher logo は `publisher_logo` / `author.thumbnail` 設定時のみ出力。文字列手組みの JSON を廃止し、`dict` を1回 `jsonify | safeJS` する構成に変更（タイトル・説明中の `</script>` や引用符・`&` でも script 境界が壊れない） |
 | `[mod]` | `layouts/_partials/taxonomy.html` | サイドバーのタクソノミーリンクを `BaseURL` の文字列連結から `ByCount` エントリの Page object ベースへ変更 |
 | `[mod]` | `layouts/_partials/categories.html` / `layouts/_partials/tags.html` / `layouts/_partials/archives.html` | `taxonomy.html` 呼び出しから不要になった `baseurl` を削除 |
 | `[new]` | `layouts/_markup/render-link.html` | 外部リンクを `target="_blank" rel="noopener"` で開く。Amazon/Rakuten 等のアフィリエイト系ドメインには `rel="sponsored"` を自動付与 |
@@ -175,6 +179,8 @@ Hugo 0.146+ の lookup 構造に合わせ、通常のレイアウトは `layouts
 | `[new]` | `layouts/_partials/archives.html` | `archives` taxonomy をサイドバーに表示 |
 | `[new]` | `layouts/_partials/memos.html` | `Site.Params.memos_url` を設定すると Memos (セルフホスト) のメモをサイドバーに表示 |
 | `[new]` | `layouts/_partials/umami.html` | `Site.Params.umami.website_id` を設定すると Umami Analytics スクリプトを挿入 |
+| `[new]` | `layouts/_partials/list-paginator.html` | home の `Site.RegularPages` と他の一覧の `RegularPages` を維持し、canonical と一覧本体で現在の pager を共有 |
+| `[new]` | `layouts/_partials/article-image.html` | OGP / JSON-LD 向けに thumbnail、image の順で Page Resources または絶対 URL を解決。未設定なら空を返し、呼び出し側の既定動作を維持 |
 | `[new]` | `layouts/_partials/thumbnail.html` | `list.html` / `summary.html` / `li_sm.html` に重複していたサムネイル解決ロジックを共通化。Page Resources 一致時は `RelPermalink`、未一致時は `relURL`、未設定時は空文字列を返す |
 | `[new]` | `layouts/_partials/icon.html` | Font Awesome Free 6.7.2 の使用アイコンをインライン SVG として提供し、外部 CDN・SRI 管理を不要化。SVG アイコンは Fonticons, Inc. による CC BY 4.0（[公式ソース](https://github.com/FortAwesome/Font-Awesome/tree/6.7.2/svgs)、[ライセンス](https://fontawesome.com/license/free)）。path data と viewBox は未変更で、インライン Hugo template 用に wrapper、class、fill、アクセシビリティ属性を変更 |
 | `[new]` | `layouts/_partials/website_json_ld.html` | home のみ `WebSite` JSON-LD（`@context`/`@type`/`name`/`url`/`description`）を出力。`SearchAction` は含めない |
@@ -183,7 +189,7 @@ Hugo 0.146+ の lookup 構造に合わせ、通常のレイアウトは `layouts
 | `[new]` | `layouts/_shortcodes/img-view.html` | 画像をグリッドで並べる。WebP 自動生成・列数指定対応 |
 | `[mod]` | `layouts/_shortcodes/img-view.html` | 通常画像 / WebP、実寸、列数、リンク動作を維持し、`loading="lazy" decoding="async"` を追加。未使用だったモバイル用の2種類の派生画像生成を削除 |
 | `[new]` | `layouts/_shortcodes/tip.html` | ページ内で一意な `role="tooltip"` と `aria-describedby` を持ち、hover / focus / click で表示して Escape でフォーカスを動かさず閉じるツールチップ |
-| `[new]` | `layouts/sitemap.xml` | `/tags/` `/categories/` `/archives/` `/_draft/` を sitemap から除外 |
+| `[new]` | `layouts/sitemap.xml` | `sitemap.disable: true` と `/tags/` `/categories/` `/archives/` `/_draft/` を sitemap から除外 |
 | `[removed]` | `layouts/partials/custom.css` | `assets/css/*.css` に分離したため削除 |
 | `[removed]` | `layouts/partials/single_meta.html` | どのテンプレートからも参照されなくなったため削除（`single_json_ld.html` に一本化） |
 | `[removed]` | `layouts/_default/baseof.amp.html` / `layouts/_default/single.amp.html` / `layouts/shortcodes/img.amp.html` | 親サイトで AMP 出力を行っていないため削除 |
@@ -334,6 +340,10 @@ hugo server --environment development --watch --buildDrafts --buildFuture
 `hugo`、`iniwach.com`で
 `hugo --environment production --printPathWarnings`を実行します。表示や操作に
 影響する場合は、該当する親サイトで`hugo server -D`を起動して確認します。
+
+canonical・sitemap・画像メタデータ・faviconの回帰確認は、Hugo ExtendedをPATHに置いて
+`node --test scripts/theme-metadata.test.mjs`を実行します。テスト用サイトと生成物は
+一時ディレクトリに作成し、親サイトやそのサブモジュールには書き込みません。
 
 事前生成OGPの変更では、上記に加えて
 `node --test scripts/build-pages.test.mjs`を実行します。

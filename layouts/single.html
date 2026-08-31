@@ -24,6 +24,5 @@
   </div>
 </div>
 
-{{/* [mod] 旧 "_internal/disqus.html" template 呼び出しから現行 partial API へ移行。未設定時は embedded partial の安全な既定動作（何も出力しない） */}}
-{{ partial "disqus.html" . }}
+{{/* [removed] Disqus のコメント埋め込みを廃止。関連する外部スクリプトも読み込まない。 */}}
 {{ end }}

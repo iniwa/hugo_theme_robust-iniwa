@@ -14,7 +14,8 @@
     <meta charset="utf-8">
     <title>{{ block "title" . }}{{ end }}{{ .Site.Title }}</title>
     {{ partial "meta.html" . }}
-    <link rel="canonical" href="{{ .Permalink }}">
+    {{/* [mod] 一覧は canonical block で現在の pager URL を使う。単一ページ等は Permalink を維持。 */}}
+    {{ block "canonical" . }}<link rel="canonical" href="{{ .Permalink }}">{{ end }}
     {{/* [mod] Google Fonts は googlefonts 設定時だけ読み込む。未設定時の Roboto Slab 強制ロードは廃止。 */}}
     {{ with .Site.Params.googlefonts }}
     <link href="{{ . }}" rel="stylesheet">

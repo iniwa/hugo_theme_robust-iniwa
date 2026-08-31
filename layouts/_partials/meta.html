@@ -1,7 +1,7 @@
 {{/*
   [mod] 上流の meta.html を全面差替。
    - [mod] Font Awesome CDN を廃止し、ローカルのインライン SVG partial へ移行
-   - favicon を <link rel="shortcut icon"> で明示
+   - params.favicon（未設定なら images/favicon.ico）を <link rel="shortcut icon"> で明示
    - AdSense <head> snippet を adsense_client_id 設定時 + 本番ビルド時のみ注入（ページの no_ads: true で抑制）
    - OGP/Twitter Card を IsHome / IsPage / その他で分岐
    - Page Bundles に対応した OG 画像解決
@@ -18,7 +18,7 @@
 {{ with .Site.Params.googlefonts }}
 <link rel="dns-prefetch preconnect" href="https://fonts.gstatic.com" crossorigin>
 {{ end }}
-<link rel="shortcut icon" href="/images/favicon.ico" />
+<link rel="shortcut icon" href="{{ .Site.Params.favicon | default "images/favicon.ico" | relURL }}" />
 <meta name="theme-color" content="{{ .Site.Params.theme_color | default "#263238" }}">
 {{ with .Site.Params.contact }}<meta name="contact" content="{{ . }}">{{ end }}
 {{ hugo.Generator }}
@@ -77,7 +77,8 @@
   {{ end }}
 {{ end }}
 
-{{ $defaultImage := .Site.Params.author.thumbnail | default "images/thumbnail/Author.png" | absURL }}
+{{/* [mod] author.thumbnail が未設定なら、テーマ同梱の実在する画像を使う。 */}}
+{{ $defaultImage := .Site.Params.author.thumbnail | default "images/default.jpg" | absURL }}
 {{ $twitterHandle := .Site.Params.author.twitter_handle | default "" }}
 {{ $siteDescription := .Site.Params.description | default .Site.Title }}
 
@@ -114,18 +115,8 @@
   <meta property="article:published_time" content="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">
   <meta property="article:modified_time" content="{{ .Lastmod.Format "2006-01-02T15:04:05Z07:00" }}">
 
-  {{/* 記事画像のURLを決定（Page Bundles対応） */}}
-  {{ $imageAbsUrl := "" }}
-  {{ $thumb := .Params.thumbnail }}
-  {{ if $thumb }}
-    {{ with .Resources.GetMatch $thumb }}
-      {{ $imageAbsUrl = .Permalink }}
-    {{ else }}
-      {{ $imageAbsUrl = $thumb | absURL }}
-    {{ end }}
-  {{ else if .Params.image }}
-    {{ $imageAbsUrl = .Params.image | absURL }}
-  {{ end }}
+  {{/* [mod] thumbnail / image のどちらも Page Bundles に対応する。 */}}
+  {{ $imageAbsUrl := partial "article-image.html" . }}
 
   {{/* [mod] OG画像URLの決定:
        commit manifest があれば immutable R2 URL を必須使用し、

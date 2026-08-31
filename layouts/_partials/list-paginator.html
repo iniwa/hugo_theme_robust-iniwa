@@ -1,0 +1,7 @@
+{{/* [new] canonical と一覧本体で同じページ集合を使う。
+     Hugo は最初の Paginate/Paginator 呼び出しをキャッシュするため、
+     home は Site.RegularPages、それ以外は現在の RegularPages で統一する。
+     現在の pager を返す必要があるので partialCached は使わない。 */}}
+{{ $pctx := . }}
+{{ if .IsHome }}{{ $pctx = .Site }}{{ end }}
+{{ return (.Paginate $pctx.RegularPages) }}
