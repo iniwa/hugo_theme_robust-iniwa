@@ -4,7 +4,7 @@
 
 This is the Codex-side working agreement for `robust-iniwa`, a public Hugo theme fork shared by `diary.iniwach.com` and `iniwach.com`.
 
-`AGENTS.md` owns design intent, model and handoff policy, Codex review, and documentation lifecycle. `CLAUDE.md` owns Claude Code execution, verification, and reporting rules.
+`AGENTS.md` owns design intent, model and handoff policy, Codex review, and documentation lifecycle. `CLAUDE.md` provides compatibility guidance under this entry.
 
 ## Project Facts
 
@@ -29,15 +29,19 @@ The active handoff or equivalent inline prompt is the approved task scope. Verif
 
 ## Model and Role Policy
 
-- Use GPT-5.3-Codex-Spark (`gpt-5.3-codex-spark`) proactively, when available, for low-risk, well-scoped, independently verifiable supporting work that requires no material design judgment or source-code implementation.
-- GPT-5.6 Terra (`gpt-5.6-terra`) or Sol (`gpt-5.6-sol`) owns requirements and theme design. Whenever Terra is used, set its reasoning level to `high`. Prefer Sol for substantial ambiguity, risk, or cross-project reasoning.
-- Run every Claude Code task with `--permission-mode auto`.
-- After design is fixed, delegate source-code implementation first to Claude Code Sonnet 5 at effort medium from the approved repository root: `claude -p --model sonnet --effort medium --permission-mode auto "<handoff/task prompt>"`.
-- Only when Sonnet 5 is unavailable because of usage limits or service availability, use GPT-5.6 Luna (`gpt-5.6-luna`) with reasoning level `max` for the same implementation slice.
-- Implementation failure, failed verification, or a design question is not model unavailability. Return it to Codex instead of switching models.
-- Apply this policy to every coordinating Codex model and its subagents; do not create coordinator-specific exceptions unless the user explicitly changes project policy.
-- Codex may keep requirements, design, read-only investigation, review, synthesis, and small documentation-consistency changes in one context.
-- Claude Code subagents are optional and limited to clearly parallel mechanical work inside the current task scope. They inherit its constraints.
+Default to primary design, implementation, related discovery, verification, corrections, and final acceptance at any task size. Delegate autonomously within existing authority only when replacing primary work lowers expected total effort, including handoff, communication, waiting, integration, verification, and corrections, or a named material risk or existing mandatory independent verification gate warrants it. Size or technical uncertainty alone is insufficient; routine direct work needs no per-task justification.
+
+- Before implementation, decide whether to delegate, then choose the role and initial route: `small-primary` for direct work of any size, `bounded` for a settled delegated outcome, `adaptive` for delegated material technical uncertainty, or `non-implementation` for analysis, design, review, or operations. Reclassify only after a material scope change or contract reset.
+- The user chooses the primary runtime model and effort. The primary owns interpretation, material design, authority, integration, final acceptance, and communication. Use configured roles without inherited history or model/effort overrides where supported. If selection is unavailable or unobservable, use the primary or an observable equivalent and record only exposed execution facts.
+- When delegation meets the rule, use one `bounded_implementer` for settled cohesive work, `adaptive_implementer` directly for material unresolved native/platform or cross-layer acceptance uncertainty, and `bounded_explorer` only for independently valuable read-only discovery that is not cheap for the writer to perform. Do not force a predictable bounded-writer failure first.
+- Only the primary delegates; children do not redelegate or invoke Claude Code. Choose parent permissions first, respect live overrides, and do not mix legacy sandbox settings with permission profiles. Read-only roles remain read-only even with write tools. Keep one writer for overlapping files or behavior.
+- Settle the outcome, protected behavior, authority, acceptance mechanics, and focused and required affected checks before delegation. Ordinary delegation uses a short inline task; persist a handoff only for cross-session, interruption-sensitive, operationally risky, or separately executed work. The writer owns related discovery, implementation, verification, and corrections.
+- Before acceptance review, self-review the stable diff against every criterion, relevant reference, and protected regression; run the required checks and return per-item passed/blocked/unmet evidence. Unchecked required items are not success. Candidate changes invalidate acceptance review; restabilize before a fresh final review if risk or a mandatory gate still warrants it.
+- Use `bounded_reviewer` only for a named material risk or an existing mandatory independent review gate. Localized low-risk documents normally need self-review only. Normally use one reviewer; a second needs a distinct material risk, an unusable/blocked first review, or an existing mandatory multi-reviewer gate. Record the reason and preserve those mandatory gates.
+- Consolidate findings for the same writer; integrate from stable diffs and evidence without repeating discovery merely to restore context. Keep one outcome and its corrections together; use a fresh task boundary for an independent phase with separate acceptance and verification.
+- While children run, continue useful work within ownership and parallelism rules or wait for notifications. Do not add research/checks, inspect changing candidates, or repeat liveness polling, rereads, or state updates merely to fill the wait. Respond to errors, inconsistent state, user steering, and host progress rules.
+- The primary may reclaim work of any size before correction thresholds when direct execution lowers remaining total effort or delegation is unavailable, after confirming child writes stopped and ownership returned, then resetting acceptance, protected boundaries, authority, environment, and evidence.
+- At the second correction round for one outcome, or after two blocked/partial implementation returns caused by unresolved acceptance, authority, or environment, pause corrective delegation and reset that contract. Choose primary execution, or justified delegation to the same bounded writer if still bounded or an adaptive writer for material technical uncertainty. Resolve missing authority with user input and keep substantive corrections with one selected writer. Do not weaken verification or abandon safe blocked work.
 
 ## Durable Theme Rules
 

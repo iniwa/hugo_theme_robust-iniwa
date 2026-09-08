@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This file defines Claude Code's execution rules for the shared `robust-iniwa` Hugo theme. `AGENTS.md` owns design intent, model selection, handoff policy, Codex review, and documentation lifecycle.
+This file is a compatibility boundary for readers that look for `CLAUDE.md`; `AGENTS.md` is authoritative for design, runtime-selected roles, delegation, review, and documentation lifecycle.
 
 ## Read Before Editing
 
@@ -23,7 +23,7 @@ This file defines Claude Code's execution rules for the shared `robust-iniwa` Hu
 - Preserve template escaping, DOMPurify sanitization in `load-memos.js`, and SRI hashes on external resources.
 - Keep upstream-divergence markers and update the README change tables when theme files are added, modified, or removed.
 - Return unresolved requirements, cross-project design choices, and security questions to Codex. If a dependency, deployment, domain, or external-exposure change becomes necessary outside the approved task scope, stop and return it to Codex.
-- Subagents are optional and limited to clearly parallel mechanical work within the same files, scope, and constraints.
+- Only the primary delegates under `AGENTS.md`; delegated agents do not redelegate, and this compatibility file grants no separate execution route.
 
 ## Cross-Repository Safety
 
