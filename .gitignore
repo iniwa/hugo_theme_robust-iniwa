@@ -1,2 +1,5 @@
 public/
 .serena/
+
+# Local agent metadata
+.codex/
